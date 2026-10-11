@@ -421,14 +421,16 @@
     2: 'trzycyfrowa liczba, bez reszty',
     3: 'zero w wyniku',
     4: 'z resztą, do czterech cyfr',
+    5: 'przez liczbę dwucyfrową',
   });
+  const NAJWYZSZY_POZIOM = 5;
 
   /** Kroki słupka po polsku: wynik nad kreską, potem dla każdej cyfry
    *  podziel → pomnóż → odejmij → ściągnij. Gdy dzielnik mieści się 0 razy, piszemy 0
    *  i od razu ściągamy następną cyfrę (bez mnożenia i odejmowania).
    *  wiersz: 0 to wiersz dzielnej, 1, 2, … to kolejne wiersze różnic. */
   function slupek(dzielna, dzielnik) {
-    if (!(dzielnik >= 2 && dzielnik <= 9) || !(dzielna >= dzielnik) || dzielna > 99999) throw new Error(`Złe zadanie: ${dzielna} : ${dzielnik}`);
+    if (!(dzielnik >= 2 && dzielnik <= 99) || !(dzielna >= dzielnik) || dzielna > 99999) throw new Error(`Złe zadanie: ${dzielna} : ${dzielnik}`);
     const C = String(dzielna).split('').map(Number), n = C.length;
     let k = 0, biez = C[0];
     while (biez < dzielnik && k < n - 1) { k += 1; biez = biez * 10 + C[k]; }
@@ -453,7 +455,8 @@
     return { dzielna, dzielnik, cyfry: C, start: k, iloraz: Math.floor(dzielna / dzielnik), reszta: dzielna % dzielnik, kroki, wierszy: wiersz + 1 };
   }
 
-  /** Zadanie na danym poziomie. Poziomy 1–2 bez zera w wyniku, 3 z zerem, 4 z resztą. */
+  /** Zadanie na danym poziomie. Poziomy 1–2 bez zera w wyniku, 3 z zerem, 4 z resztą,
+   *  5 przez liczbę dwucyfrową (11–39, wynik dwucyfrowy, reszta bywa), jak w podstawie programowej klas 4–6. */
   function zadanieSlupek(poziom, losuj = Math.random) {
     const los = (a, b) => a + Math.floor(losuj() * (b - a + 1));
     for (let proba = 0; proba < 1000; proba++) {
@@ -461,7 +464,8 @@
       if (poziom <= 1) { d = los(2, 5); q = los(10, Math.floor(99 / d)); if (String(q).includes('0')) continue; }
       else if (poziom === 2) { d = los(2, 9); q = los(Math.ceil(100 / d), Math.floor(999 / d)); if (String(q).includes('0')) continue; }
       else if (poziom === 3) { d = los(2, 9); q = los(Math.ceil(100 / d), Math.floor(999 / d)); if (!String(q).slice(1).includes('0')) continue; }
-      else { d = los(3, 9); const dl = los(100, 9999); q = Math.floor(dl / d); r = dl % d; if (r === 0 || q < 10) continue; }
+      else if (poziom === 4) { d = los(3, 9); const dl = los(100, 9999); q = Math.floor(dl / d); r = dl % d; if (r === 0 || q < 10) continue; }
+      else { d = los(11, 39); q = los(12, 99); r = losuj() < 0.5 ? 0 : los(1, d - 1); }
       const dzielna = d * q + r;
       if (poziom <= 1 && (dzielna < 10 || dzielna > 99)) continue;
       if ((poziom === 2 || poziom === 3) && (dzielna < 100 || dzielna > 999)) continue;
@@ -478,6 +482,9 @@
   function ukladSlupka(sl) {
     const n = sl.cyfry.length, kol = k => 1 + k;
     const komorki = [], kreski = [], uwagi = sl.kroki.map(() => []), cele = [];
+    // Dzielnik i reszta po jednej cyfrze w kratce, jak w zeszycie (przy dzielniku dwucyfrowym dwie kratki).
+    const cyfryDzielnika = String(sl.dzielnik).split('');
+    const kratkiDzielnika = cyfryDzielnika.map((_, i) => ({ r: 1, c: n + 2 + i }));
     const dodaj = (r, c, txt, krok, rola) => komorki.push({ r, c, txt: String(txt), krok, rola });
     const wiersz = w => 1 + 2 * w;      // wiersz z liczbą, od której odejmujemy
     const podWiersz = w => 2 + 2 * w;   // wiersz z liczbą odejmowaną
@@ -490,7 +497,7 @@
 
     sl.cyfry.forEach((c, i) => dodaj(1, kol(i), c, -1, 'dzielna'));
     dodaj(1, n + 1, ':', -1, 'znak');
-    dodaj(1, n + 2, sl.dzielnik, -1, 'dzielnik');
+    cyfryDzielnika.forEach((c, i) => dodaj(1, n + 2 + i, c, -1, 'dzielnik'));
     for (let i = 0; i < n; i++) kreski.push({ r: 0, c: kol(i), krok: -1 });
     // Gdzie w tej chwili stoi liczba, którą dzielimy: wiersz i ostatnia kolumna.
     sl.kroki.forEach((k, idx) => {
@@ -505,11 +512,12 @@
         dodaj(r, lewa - 1, '−', idx, 'znak');
         for (let cc = lewa; cc <= c; cc++) kreski.push({ r, c: cc, krok: idx + 1 });
         cele[idx] = { r, c };
-        uwagi[idx] = [{ r: 0, c }, { r: 1, c: n + 2 }];
+        uwagi[idx] = [{ r: 0, c }].concat(kratkiDzielnika);
       } else if (k.typ === 'odejmij') {
         const r = wiersz(k.wiersz);
         const nast = sl.kroki[idx + 1];
-        dodaj(r, c, k.odp, idx, k.odp === 0 && nast && nast.typ === 'sciagnij' ? 'zero' : 'roznica');
+        // Różnica może mieć dwie cyfry (przy dzielniku dwucyfrowym): każda w swojej kratce, do prawej.
+        cyfryNa(r, c, k.odp, idx, k.odp === 0 && nast && nast.typ === 'sciagnij' ? 'zero' : 'roznica');
         cele[idx] = { r, c };
         uwagi[idx] = zakres(wiersz(k.wiersz - 1), c, String(k.biez).length).concat(zakres(podWiersz(k.wiersz - 1), c, String(k.il).length));
       } else {
@@ -519,8 +527,11 @@
         uwagi[idx] = [{ r: 1, c }];
       }
     });
-    if (sl.reszta > 0) { dodaj(0, n + 1, 'r.', sl.kroki.length, 'znak'); dodaj(0, n + 2, sl.reszta, sl.kroki.length, 'reszta'); }
-    return { wierszy: 2 * sl.wierszy, kolumn: n + 3, komorki, kreski, uwagi, cele };
+    if (sl.reszta > 0) {
+      dodaj(0, n + 1, 'r.', sl.kroki.length, 'znak');
+      String(sl.reszta).split('').forEach((c, i) => dodaj(0, n + 2 + i, c, sl.kroki.length, 'reszta'));
+    }
+    return { wierszy: 2 * sl.wierszy, kolumn: n + 2 + cyfryDzielnika.length, komorki, kreski, uwagi, cele };
   }
 
   /** Pytanie do kroku i podpowiedź (podpowiedź nie podaje odpowiedzi wprost). */
@@ -528,9 +539,15 @@
     if (k.typ === 'podziel') {
       const wiel = [];
       for (let i = 1; i <= 9 && i * dzielnik <= k.biez + dzielnik; i++) wiel.push(i * dzielnik);
+      // Dzielnik dwucyfrowy: szacowanie dziesiątkami („przy 23 myśl o 20”), potem sprawdzenie mnożeniem.
+      const szacuj = dzielnik % 10 === 0
+        ? `Pomyśl o dziesiątkach: ile razy ${dzielnik / 10} mieści się w ${Math.floor(k.biez / 10)}?`
+        : `Szacuj: ${dzielnik} to około ${Math.round(dzielnik / 10) * 10}. Ile razy ${Math.round(dzielnik / 10) * 10} mieści się w ${k.biez}? Potem sprawdź mnożeniem i popraw o jeden.`;
       return {
         pytanie: `Ile razy ${dzielnik} mieści się w ${k.biez}?`,
-        podpowiedz: k.biez < dzielnik ? `${k.biez} jest mniejsze od ${dzielnik}.` : `Licz po ${dzielnik}: ${wiel.join(', ')}. Ile kroków nie przekracza ${k.biez}?`,
+        podpowiedz: k.biez < dzielnik ? `${k.biez} jest mniejsze od ${dzielnik}.`
+          : dzielnik >= 10 ? szacuj
+            : `Licz po ${dzielnik}: ${wiel.join(', ')}. Ile kroków nie przekracza ${k.biez}?`,
       };
     }
     if (k.typ === 'pomnoz') return { pytanie: `${k.q} × ${dzielnik} =`, podpowiedz: 'Pomnóż cyfrę nad kreską przez dzielnik.' };
@@ -561,13 +578,13 @@
     return { pomnoz: 'mnożenie', odejmij: 'odejmowanie', sciagnij: 'ściąganie cyfry' }[krok.typ] || krok.typ;
   }
 
-  /** Następny poziom po zadaniu: dwa gładkie zadania pod rząd w górę, cztery pomyłki w jednym w dół. */
+  /** Następny poziom po zadaniu: dwa gładkie zadania pod rząd w górę (najwyżej do 5), cztery pomyłki w jednym w dół. */
   function poZadaniuSlupek(st0, pomylek) {
     const st = Object.assign({ poziom: 1, gladkich: 0, zadan: 0 }, st0 || {});
     st.zadan += 1;
     if (pomylek <= 1) {
       st.gladkich += 1;
-      if (st.gladkich >= 2 && st.poziom < 4) { st.poziom += 1; st.gladkich = 0; }
+      if (st.gladkich >= 2 && st.poziom < NAJWYZSZY_POZIOM) { st.poziom += 1; st.gladkich = 0; }
     } else {
       st.gladkich = 0;
       if (pomylek >= 4 && st.poziom > 1) st.poziom -= 1;
@@ -608,7 +625,7 @@
     nowyRekord, status, sredniCzas, zapiszWynik,
     dobierz, nowaSesja, biezace, odpowiedz, dolozLatwe, podsumowanie,
     punktyZaSesje, sesjeZPunktamiDzis, liczby, csv,
-    odblokowane, POZIOMY_SLUPKA, slupek, zadanieSlupek, rodzajPomylki, poZadaniuSlupek,
+    odblokowane, POZIOMY_SLUPKA, NAJWYZSZY_POZIOM, slupek, zadanieSlupek, rodzajPomylki, poZadaniuSlupek,
     ukladSlupka, pytanieKroku, wyjasnienieKroku,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = Silnik;

@@ -348,7 +348,7 @@
     if (trybS === 'pokazano') { if (k === 'ok') { zad.cur += 1; nastepnyKrok(); } return; }
     if (trybS === 'gotowe') { if (k === 'ok') poZadaniu(); return; }
     if (trybS !== 'pytanie') return;
-    if (/^[0-9]$/.test(k)) { if (wpisaneS.length < 2) { wpisaneS = (wpisaneS === '0' ? '' : wpisaneS) + k; pokazPytanieS(); } }
+    if (/^[0-9]$/.test(k)) { if (wpisaneS.length < 3) { wpisaneS = (wpisaneS === '0' ? '' : wpisaneS) + k; pokazPytanieS(); } }
     else if (k === 'usun') { wpisaneS = wpisaneS.slice(0, -1); pokazPytanieS(); }
     else if (k === 'ok') { if (wpisaneS) sprawdzKrok(false); }
     else if (k === 'nie-wiem') sprawdzKrok(true);
@@ -536,7 +536,7 @@
     $('modul-reszta-info').textContent = OPIS_MODULU(u.moduly.reszta, m.auto.reszta, m.pewneDzielenia, 48, 64, 'dzieleń z tabliczki');
     $('modul-slupek-info').textContent = OPIS_MODULU(u.moduly.slupek, m.auto.slupek, m.pewneReszty, 36, 72, 'działań z resztą');
     $('u-zadan').value = u.zadanSlupka;
-    $('slupek-poziom').textContent = `Poziom ${stan.slupek.poziom} z 4: ${S.POZIOMY_SLUPKA[stan.slupek.poziom]}. Zrobionych zadań: ${stan.slupek.zadan || 0}.`;
+    $('slupek-poziom').textContent = `Poziom ${stan.slupek.poziom} z ${S.NAJWYZSZY_POZIOM}: ${S.POZIOMY_SLUPKA[stan.slupek.poziom]}. Zrobionych zadań: ${stan.slupek.zadan || 0}.`;
     const ul = $('slupek-pomylki'); ul.textContent = '';
     const h = (stan.slupek.historia || []).slice(-10).reverse();
     if (!h.length) { const li = document.createElement('li'); li.textContent = 'Jeszcze nie było zadań.'; ul.appendChild(li); }
