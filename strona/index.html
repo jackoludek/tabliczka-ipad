@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tabliczka">
+<meta name="description" content="Mnożenie i dzielenie w krótkich sesjach, bez pośpiechu.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="ikona-180.png">
+<link rel="icon" href="ikona.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styl.css">
+<title>Mnożenie i dzielenie</title>
+</head>
+<body>
+<p class="tylko-czytnik" id="ogloszenia" aria-live="polite"></p>
+
+<!-- Start -->
+<main id="start" class="ekran ekran-start">
+  <header class="naglowek">
+    <p class="nad" id="start-data"></p>
+    <h1 id="start-tytul" tabindex="-1">Cześć!</h1>
+    <p class="wstep" id="start-wstep"></p>
+  </header>
+  <div class="kafle" id="kafle" aria-label="Menu. Kafelki można przestawiać: przeciągnij albo Alt i strzałka.">
+    <button class="kafel kafel-glowny" data-id="cwicz" id="przycisk-cwicz" type="button">
+      <span class="kafel-tytul">Ćwiczymy</span>
+      <span class="kafel-opis" id="cwicz-opis"></span>
+    </button>
+    <button class="kafel" data-id="reszta" id="przycisk-reszta" type="button" hidden>
+      <span class="kafel-tytul">Z resztą</span>
+      <span class="kafel-opis" id="reszta-opis">Na przykład 47 : 5 = 9 r. 2</span>
+    </button>
+    <button class="kafel" data-id="slupek" id="przycisk-slupek" type="button" hidden>
+      <span class="kafel-tytul">Dzielenie w słupku</span>
+      <span class="kafel-opis" id="slupek-opis"></span>
+    </button>
+    <button class="kafel" data-id="sloik" id="przycisk-sloik" type="button">
+      <span class="kafel-tytul">Słoik</span>
+      <span class="kafel-opis" id="sloik-opis"></span>
+      <span class="pasek" aria-hidden="true"><span id="sloik-pasek"></span></span>
+    </button>
+    <button class="kafel" data-id="rodzice" id="przycisk-rodzice" type="button">
+      <span class="kafel-tytul">Dla rodziców</span>
+      <span class="kafel-opis">Postępy i ustawienia</span>
+    </button>
+  </div>
+</main>
+
+<!-- Sesja -->
+<main id="sesja" class="ekran ekran-sesja" hidden>
+  <div class="sesja-gora">
+    <button class="cichy" id="sesja-koniec" type="button">Koniec</button>
+    <div class="postep" role="progressbar" aria-label="Postęp sesji" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="postep"><span id="postep-pasek"></span></div>
+    <button class="cichy" id="podpowiedz" type="button">Podpowiedź</button>
+  </div>
+  <section class="karta-pytania" id="karta" aria-live="polite">
+    <p class="dzialanie" id="dzialanie" tabindex="-1"></p>
+    <div class="odpowiedz-wiersz">
+      <p class="wpisana aktywna-czesc" id="wpisana" aria-label="Twoja odpowiedź"></p>
+      <span class="r-znak" id="r-znak" hidden>r.</span>
+      <p class="wpisana wpisana-reszta" id="wpisana-reszta" aria-label="Reszta" hidden></p>
+    </div>
+    <p class="informacja" id="informacja"></p>
+    <p class="sposob" id="sposob"></p>
+  </section>
+  <div class="klawiatura" id="klawiatura" aria-label="Klawiatura">
+    <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+    <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+    <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+    <button type="button" data-k="nie-wiem" class="klawisz-cichy" id="nie-wiem">Nie wiem</button>
+    <button type="button" data-k="0">0</button>
+    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę">⌫</button>
+    <button type="button" data-k="ok" class="klawisz-ok" id="klawisz-ok">Sprawdź</button>
+  </div>
+</main>
+
+<!-- Słupek -->
+<main id="slupek" class="ekran ekran-sesja ekran-slupek" hidden>
+  <div class="sesja-gora">
+    <button class="cichy" id="slupek-koniec" type="button">Koniec</button>
+    <div class="postep" role="progressbar" aria-label="Zadania w tej sesji" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="slupek-postep"><span id="slupek-postep-pasek"></span></div>
+    <button class="cichy" id="slupek-podpowiedz" type="button">Podpowiedź</button>
+  </div>
+  <section class="karta-pytania karta-slupek" id="slupek-karta">
+    <div class="slupek-ramka"><table class="slupek-tabela" id="slupek-tabela" aria-hidden="true"></table></div>
+    <p class="slupek-pytanie" id="slupek-pytanie" tabindex="-1" aria-live="polite"></p>
+    <p class="sposob" id="slupek-info" aria-live="polite"></p>
+  </section>
+  <div class="klawiatura" id="klawiatura-slupek" aria-label="Klawiatura">
+    <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+    <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+    <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+    <button type="button" data-k="nie-wiem" class="klawisz-cichy">Nie wiem</button>
+    <button type="button" data-k="0">0</button>
+    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę">⌫</button>
+    <button type="button" data-k="ok" class="klawisz-ok" id="slupek-ok">Sprawdź</button>
+  </div>
+</main>
+
+<!-- Przerwa -->
+<main id="przerwa" class="ekran ekran-srodek" hidden>
+  <div class="tresc-srodek">
+    <h1 tabindex="-1">Chwila oddechu</h1>
+    <p class="wstep">Weź trzy spokojne oddechy. Potem zrobimy coś łatwego albo kończymy na dziś. Obie drogi są dobre.</p>
+    <div class="przyciski">
+      <button class="przycisk" id="przerwa-latwe" type="button">Jeszcze 3 łatwe</button>
+      <button class="przycisk przycisk-drugi" id="przerwa-koniec" type="button">Koniec na dziś</button>
+    </div>
+  </div>
+</main>
+
+<!-- Koniec sesji -->
+<main id="koniec" class="ekran ekran-srodek" hidden>
+  <div class="tresc-srodek">
+    <h1 id="koniec-tytul" tabindex="-1">Brawo!</h1>
+    <div id="koniec-zdania" class="zdania"></div>
+    <p class="punkty" id="koniec-punkty"></p>
+    <div class="przyciski">
+      <button class="przycisk" id="koniec-wroc" type="button">Gotowe</button>
+    </div>
+  </div>
+</main>
+
+<!-- Słoik -->
+<main id="sloik" class="ekran ekran-srodek" hidden>
+  <div class="tresc-srodek">
+    <p class="nad">Słoik</p>
+    <h1 tabindex="-1"><span id="sloik-punkty">0</span> punktów</h1>
+    <p class="wstep" id="sloik-cel"></p>
+    <div class="sloik-rysunek" aria-hidden="true"><div class="sloik-wypelnienie" id="sloik-wypelnienie"></div></div>
+    <p class="drugi" id="sloik-zasady"></p>
+    <div class="przyciski"><button class="przycisk" id="sloik-wroc" type="button">Wróć</button></div>
+  </div>
+</main>
+
+<!-- PIN rodziców -->
+<main id="pin" class="ekran ekran-srodek" hidden>
+  <form class="tresc-srodek" id="pin-formularz" autocomplete="off">
+    <h1 tabindex="-1" id="pin-tytul">Dla rodziców</h1>
+    <p class="wstep" id="pin-opis">Wpisz PIN.</p>
+    <label class="pole-etykieta" for="pin-pole">PIN</label>
+    <input class="pole pole-pin" id="pin-pole" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" required>
+    <p class="drugi" id="pin-blad" aria-live="assertive"></p>
+    <div class="przyciski">
+      <button class="przycisk" type="submit">Dalej</button>
+      <button class="przycisk przycisk-drugi" type="button" id="pin-wroc">Wróć</button>
+    </div>
+  </form>
+</main>
+
+<!-- Rodzice -->
+<main id="rodzice" class="ekran ekran-rodzice" hidden>
+  <header class="rodzice-gora">
+    <h1 tabindex="-1">Dla rodziców</h1>
+    <button class="cichy" id="rodzice-wroc" type="button">Wróć</button>
+  </header>
+  <p class="podsumowanie" id="rodzice-podsumowanie"></p>
+  <div class="zakladki" id="zakladki" role="tablist" aria-label="Widoki. Zakładki można przestawiać: przeciągnij albo Alt i strzałka.">
+    <button role="tab" data-id="mnozenie" type="button" aria-selected="true">Mnożenie</button>
+    <button role="tab" data-id="dzielenie" type="button" aria-selected="false">Dzielenie</button>
+    <button role="tab" data-id="reszta" type="button" aria-selected="false">Z resztą</button>
+    <button role="tab" data-id="slupek" type="button" aria-selected="false">Słupek</button>
+    <button role="tab" data-id="odpowiedzi" type="button" aria-selected="false">Odpowiedzi</button>
+    <button role="tab" data-id="nagroda" type="button" aria-selected="false">Słoik</button>
+    <button role="tab" data-id="dane" type="button" aria-selected="false">Dane</button>
+  </div>
+
+  <section class="panel" id="panel-mnozenie" role="tabpanel">
+    <div class="siatka-ramka"><table class="siatka" id="siatka-mnozenie"></table></div>
+    <p class="legenda" id="legenda-mnozenie"></p>
+  </section>
+  <section class="panel" id="panel-dzielenie" role="tabpanel" hidden>
+    <div class="siatka-ramka"><table class="siatka" id="siatka-dzielenie"></table></div>
+    <p class="legenda" id="legenda-dzielenie"></p>
+  </section>
+  <section class="panel" id="panel-reszta" role="tabpanel" hidden>
+    <div class="formularz">
+      <label class="pole-etykieta" for="modul-reszta">Dzielenie z resztą na ekranie dziecka</label>
+      <select class="pole" id="modul-reszta">
+        <option value="auto">Samo, gdy dzielenie z tabliczki jest pewne</option>
+        <option value="tak">Włączone</option>
+        <option value="nie">Wyłączone</option>
+      </select>
+      <p class="drugi" id="modul-reszta-info"></p>
+    </div>
+    <div class="siatka-ramka"><table class="siatka" id="siatka-reszta"></table></div>
+    <p class="legenda" id="legenda-reszta"></p>
+  </section>
+  <section class="panel" id="panel-slupek" role="tabpanel" hidden>
+    <div class="formularz">
+      <label class="pole-etykieta" for="modul-slupek">Dzielenie w słupku na ekranie dziecka</label>
+      <select class="pole" id="modul-slupek">
+        <option value="auto">Samo, gdy dzielenie z resztą jest pewne</option>
+        <option value="tak">Włączone</option>
+        <option value="nie">Wyłączone</option>
+      </select>
+      <p class="drugi" id="modul-slupek-info"></p>
+      <label class="pole-etykieta" for="u-zadan">Zadań w jednej sesji</label>
+      <input class="pole" id="u-zadan" type="number" min="1" max="6" inputmode="numeric">
+    </div>
+    <h2>Poziom</h2>
+    <p id="slupek-poziom"></p>
+    <h2>Pomyłki w ostatnich zadaniach</h2>
+    <ul class="historia" id="slupek-pomylki"></ul>
+  </section>
+  <section class="panel" id="panel-odpowiedzi" role="tabpanel" hidden>
+    <p class="drugi">Ostatnie 60 odpowiedzi. Kolumny można przestawiać.</p>
+    <div class="tabela-ramka"><table class="tabela" id="tabela-odpowiedzi"><thead><tr id="tabela-naglowek"></tr></thead><tbody id="tabela-cialo"></tbody></table></div>
+  </section>
+  <section class="panel" id="panel-nagroda" role="tabpanel" hidden>
+    <form id="nagroda-formularz" class="formularz">
+      <label class="pole-etykieta" for="u-imie">Imię dziecka</label>
+      <input class="pole" id="u-imie" maxlength="20">
+      <label class="pole-etykieta" for="u-punkty">Punkty za skończoną sesję</label>
+      <input class="pole" id="u-punkty" type="number" min="1" max="100" inputmode="numeric">
+      <label class="pole-etykieta" for="u-sesji">Ile sesji dziennie daje punkty</label>
+      <input class="pole" id="u-sesji" type="number" min="1" max="5" inputmode="numeric">
+      <label class="pole-etykieta" for="u-cel">Ile punktów do nagrody</label>
+      <input class="pole" id="u-cel" type="number" min="10" max="10000" inputmode="numeric">
+      <label class="pole-etykieta" for="u-opis">Nagroda</label>
+      <input class="pole" id="u-opis" maxlength="40">
+      <div class="przyciski przyciski-lewo">
+        <button class="przycisk" type="submit">Zapisz</button>
+        <button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button>
+      </div>
+      <p class="drugi" id="nagroda-info" aria-live="polite"></p>
+      <h2>Bonus</h2>
+      <p class="drugi">Od czasu do czasu, bez zapowiedzi. Nie liczy się do dziennego limitu sesji.</p>
+      <label class="pole-etykieta" for="u-bonus">Ile punktów</label>
+      <input class="pole" id="u-bonus" type="number" min="1" max="500" inputmode="numeric">
+      <label class="pole-etykieta" for="u-bonus-opis">Za co (dziecko to zobaczy)</label>
+      <input class="pole" id="u-bonus-opis" maxlength="40" placeholder="na przykład: za cały tydzień">
+      <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="dodaj-bonus">Dodaj do słoika</button></div>
+    </form>
+    <h2>Historia słoika</h2>
+    <ul class="historia" id="sloik-historia"></ul>
+  </section>
+  <section class="panel" id="panel-dane" role="tabpanel" hidden>
+    <p class="drugi">Każda odpowiedź z czasem. Plik otwiera się w Excelu.</p>
+    <div class="przyciski przyciski-lewo">
+      <button class="przycisk" type="button" id="pobierz-csv">Pobierz tabelę</button>
+      <button class="przycisk przycisk-drugi" type="button" id="udostepnij-csv" hidden>Wyślij tabelę</button>
+    </div>
+    <h2>PIN</h2>
+    <div class="formularz">
+      <label class="pole-etykieta" for="nowy-pin">Nowy PIN</label>
+      <input class="pole pole-pin" id="nowy-pin" type="password" inputmode="numeric" maxlength="8">
+      <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="zmien-pin">Zmień PIN</button></div>
+    </div>
+    <h2>Kolejność</h2>
+    <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="przywroc-kolejnosc">Przywróć kolejność kafelków i kolumn</button></div>
+    <h2>Od nowa</h2>
+    <p class="drugi">Kasuje wszystkie odpowiedzi, słoik i ustawienia w tym telefonie.</p>
+    <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="wyczysc">Wyczyść wszystko</button></div>
+    <p class="drugi" id="dane-info" aria-live="polite"></p>
+  </section>
+</main>
+
+<script src="silnik.js"></script>
+<script src="baza.js"></script>
+<script src="przestawiane.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

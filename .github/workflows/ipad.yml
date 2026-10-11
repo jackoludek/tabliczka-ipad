@@ -1,0 +1,27 @@
+# Buduje Tabliczkę na iPada na Macu GitHuba i testuje ją na symulatorze iPada mini.
+# Wynik (artefakt „tabliczka-ipad”): Tabliczka.ipa, werdykt testu i zrzuty ekranu.
+# Ten plik leży w repozytorium jako .github/workflows/ipad.yml (kopiuje go ipad/zbuduj-na-githubie.ps1).
+name: iPad
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  buduj:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zbuduj IPA i wersję na symulator
+        run: bash ipad/buduj.sh
+      - name: Test na symulatorze iPada mini
+        run: bash ipad/test-symulator.sh
+      - name: Wynik
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tabliczka-ipad
+          path: wynik/
+          retention-days: 30

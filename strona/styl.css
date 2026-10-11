@@ -1,0 +1,247 @@
+/* Inter 4.1 – licencja SIL Open Font License 1.1, plik „inter - licencja SIL OFL 1.1.txt” obok. */
+@font-face { font-family: "Inter"; src: url("inter.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+
+/* Kolory: motyw za systemem, bez przełącznika. Ciemny to czerń.
+ * Kontrast każdej pary liczy testy\kontrast.test.cjs (tekst 4,5:1). */
+:root {
+  color-scheme: light dark;
+  --tlo: #f5f5f7;
+  --karta: #ffffff;
+  --pole: #e8e8ed;
+  --pole-wcisniete: #d2d2d7;
+  --tekst: #1d1d1f;
+  --drugi: #636366;
+  --obwodka: #d2d2d7;
+  --akcent: #0066cc;
+  --przycisk: #0071e3;
+  --na-przycisku: #ffffff;
+  --dobrze: #187331;
+  --dobrze-tlo: #e3f5e8;
+  --pokaz-tlo: #e8f1fc;
+  --skala-1: #ff383c; --skala-2: #ff8d28; --skala-3: #ffcc00; --skala-4: #34c759;
+  --lider: #a843db; --na-liderze: #ffffff;
+  --cien: 0 1px 2px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .06);
+  --promien: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tlo: #000000;
+    --karta: #000000;
+    --pole: #1c1c1e;
+    --pole-wcisniete: #2c2c2e;
+    --tekst: #ffffff;
+    --drugi: #c0bfbc;
+    --obwodka: #48484a;
+    --akcent: #2997ff;
+    --przycisk: #0071e3;
+    --na-przycisku: #ffffff;
+    --dobrze: #30d158;
+    --dobrze-tlo: #0d2a16;
+    --pokaz-tlo: #0a1f36;
+    --skala-1: #ff4245; --skala-2: #ff9230; --skala-3: #ffd600; --skala-4: #30d158;
+    --cien: none;
+  }
+}
+
+* { box-sizing: border-box; }
+html { height: 100%; -webkit-text-size-adjust: 100%; scrollbar-width: thin; scrollbar-color: transparent transparent; }
+html:hover { scrollbar-color: var(--obwodka) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: transparent; border-radius: 3px; }
+:hover::-webkit-scrollbar-thumb { background: var(--obwodka); }
+body {
+  margin: 0; min-height: 100%;
+  background: var(--tlo); color: var(--tekst);
+  font: 17px/1.45 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-tap-highlight-color: transparent;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--akcent); outline-offset: 2px; border-radius: 10px; }
+[hidden] { display: none !important; }
+.tylko-czytnik { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.ekran {
+  min-height: 100vh; min-height: 100dvh;
+  max-width: 560px; margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);
+}
+.nad { margin: 0 0 4px; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--drugi); }
+h1 { margin: 0; font-size: 34px; line-height: 1.12; font-weight: 700; letter-spacing: -.02em; }
+h1:focus { outline: none; }
+h2 { font-size: 20px; margin: 28px 0 10px; }
+.wstep { margin: 10px 0 0; font-size: 19px; line-height: 1.4; }
+.drugi { color: var(--drugi); margin: 8px 0; }
+
+/* Przyciski */
+.przyciski { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.przyciski-lewo { flex-direction: row; flex-wrap: wrap; }
+.przycisk {
+  min-height: 52px; padding: 12px 22px; border: 0; border-radius: 14px;
+  background: var(--przycisk); color: var(--na-przycisku); font-size: 18px; font-weight: 600;
+}
+.przycisk-drugi { background: var(--pole); color: var(--tekst); }
+.cichy { background: none; border: 0; color: var(--akcent); font-size: 17px; font-weight: 500; padding: 10px 6px; min-height: 44px; }
+
+/* Start */
+.ekran-start { display: flex; flex-direction: column; gap: 28px; }
+.naglowek { padding-top: 12px; }
+.kafle { display: grid; gap: 12px; }
+.kafel {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left;
+  padding: 20px; border: 1px solid var(--obwodka); border-radius: var(--promien);
+  background: var(--karta); box-shadow: var(--cien); min-height: 88px;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+}
+.kafel-glowny { background: var(--przycisk); color: var(--na-przycisku); border-color: transparent; min-height: 132px; justify-content: flex-end; }
+.kafel-tytul { font-size: 24px; font-weight: 700; letter-spacing: -.01em; }
+.kafel-glowny .kafel-tytul { font-size: 30px; }
+.kafel-opis { font-size: 16px; color: var(--drugi); }
+.kafel-glowny .kafel-opis { color: var(--na-przycisku); }
+.pasek { display: block; width: 100%; height: 8px; border-radius: 4px; background: var(--pole); margin-top: 8px; overflow: hidden; }
+.pasek > span { display: block; height: 100%; width: 0; background: var(--dobrze); border-radius: 4px; }
+.przeciagany { opacity: .85; transform: scale(1.02); box-shadow: 0 8px 28px rgba(0, 0, 0, .18); z-index: 2; position: relative; }
+.przestawianie > * { transition: transform .15s ease; }
+
+/* Sesja: wszystko na jednym ekranie, bez przewijania */
+.ekran-sesja { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; height: 100vh; height: 100dvh; min-height: 0; }
+.sesja-gora { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
+.postep { height: 8px; border-radius: 4px; background: var(--pole); overflow: hidden; }
+.postep > span { display: block; height: 100%; width: 0; background: var(--akcent); border-radius: 4px; transition: width .3s ease; }
+.karta-pytania {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  background: var(--karta); border: 1px solid var(--obwodka); border-radius: 24px; box-shadow: var(--cien);
+  padding: 16px; min-height: 0; transition: background-color .2s ease;
+}
+.dzialanie { margin: 0; font-size: clamp(52px, 15vw, 84px); font-weight: 700; letter-spacing: -.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.dzialanie:focus { outline: none; }
+.wpisana {
+  margin: 12px 0 0; min-width: 3.2ch; min-height: 1.2em; padding: 2px 14px;
+  font-size: clamp(44px, 12vw, 68px); font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums;
+  border-bottom: 3px solid var(--obwodka);
+}
+.informacja { margin: 12px 0 0; min-height: 1.4em; font-size: 20px; font-weight: 600; }
+.sposob { margin: 6px 0 0; min-height: 1.4em; font-size: 17px; color: var(--drugi); }
+.karta-pytania.dobrze { background: var(--dobrze-tlo); }
+.karta-pytania.dobrze .informacja { color: var(--dobrze); }
+.karta-pytania.pokaz { background: var(--pokaz-tlo); }
+.karta-pytania.pokaz .wpisana { color: var(--akcent); border-color: var(--akcent); }
+
+/* Dzielenie z resztą: dwie części odpowiedzi */
+.odpowiedz-wiersz { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin-top: 12px; }
+.odpowiedz-wiersz .wpisana { margin: 0; }
+.r-znak { font-size: clamp(30px, 8vw, 44px); font-weight: 600; color: var(--drugi); }
+.wpisana-reszta { min-width: 2ch; }
+.wpisana.aktywna-czesc { border-bottom-color: var(--akcent); }
+.z-reszta .dzialanie { font-size: clamp(44px, 12vw, 72px); }
+
+/* Słupek: kratka jak w zeszycie */
+.karta-slupek { justify-content: flex-start; padding: 12px; gap: 8px; }
+/* --k (wielkość kratki) ustawia app.js według miejsca w karcie; wartość z CSS to zapas. */
+.slupek-ramka {
+  --k: clamp(26px, 4.3vh, 40px);
+  flex: 1 1 auto; min-height: 0; width: 100%; overflow: auto; display: flex;
+  scroll-padding-top: calc(var(--k) * 2);
+}
+/* margin: auto centruje kratkę, a gdy się nie mieści, nie ucina jej góry (jak align-items: center). */
+.slupek-tabela { border-collapse: separate; border-spacing: 0; margin: auto; font-variant-numeric: tabular-nums; }
+/* Wynik i dzielna zawsze widoczne, nawet gdy kratka musi się przewijać. */
+.slupek-tabela :where(tr:nth-child(-n+2)) > td { position: sticky; z-index: 1; background-color: var(--karta); }
+.slupek-tabela :where(tr:nth-child(1)) > td { top: 0; }
+.slupek-tabela :where(tr:nth-child(2)) > td { top: var(--k); }
+.karta-slupek.pokaz .slupek-tabela :where(tr:nth-child(-n+2)) > td { background-color: var(--pokaz-tlo); }
+.karta-slupek.dobrze .slupek-tabela :where(tr:nth-child(-n+2)) > td { background-color: var(--dobrze-tlo); }
+.slupek-tabela td {
+  width: var(--k); height: var(--k); min-width: var(--k); padding: 0; text-align: center; vertical-align: middle;
+  font-size: calc(var(--k) * .72); font-weight: 600; line-height: 1; border-radius: 6px;
+}
+.siatka-waska td { width: 44px; font-size: 13px; padding: 0 2px; }
+.siatka-waska td small { font-size: 10px; }
+.slupek-tabela td.kreska { border-bottom: 3px solid var(--tekst); border-radius: 0; }
+.slupek-tabela td.uwaga, .karta-slupek .slupek-tabela :where(tr) > td.uwaga { background-color: var(--pokaz-tlo); box-shadow: inset 0 0 0 2px var(--akcent-slaby, rgba(0, 113, 227, .35)); }
+.karta-slupek .slupek-tabela :where(tr) > td.cel { box-shadow: inset 0 0 0 3px var(--akcent); }
+.slupek-tabela td.rola-zero { color: var(--drugi); }
+.slupek-tabela td.rola-znak { color: var(--drugi); font-weight: 500; }
+.slupek-tabela td.rola-reszta { color: var(--akcent); }
+.slupek-tabela td.uzyta { text-decoration: underline dotted var(--drugi); text-underline-offset: 4px; }
+.slupek-tabela td.poprawione { color: var(--akcent); }
+.slupek-tabela td.swieze { color: var(--dobrze); }
+.slupek-pytanie { margin: 0; font-size: clamp(22px, 6vw, 30px); font-weight: 700; text-align: center; font-variant-numeric: tabular-nums; }
+.slupek-pytanie:focus { outline: none; }
+.slupek-odp { display: inline-block; min-width: 2ch; padding: 0 6px; border-bottom: 3px solid var(--akcent); color: var(--akcent); }
+.karta-slupek.dobrze .slupek-odp { color: var(--dobrze); border-color: var(--dobrze); }
+.karta-slupek .sposob { margin: 0; text-align: center; color: var(--tekst); }
+select.pole { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--drugi) 50%), linear-gradient(135deg, var(--drugi) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 36px; }
+
+.klawiatura { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.klawiatura button {
+  min-height: clamp(50px, 7.2vh, 64px); border: 0; border-radius: 14px; background: var(--pole);
+  font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; touch-action: manipulation;
+}
+.klawiatura button:active { background: var(--pole-wcisniete); }
+.klawiatura .klawisz-cichy { font-size: 17px; font-weight: 500; }
+.klawiatura .klawisz-ok { grid-column: 1 / -1; background: var(--przycisk); color: var(--na-przycisku); font-size: 21px; }
+.klawiatura .klawisz-ok:active { filter: brightness(.92); }
+
+/* Ekrany środkowe */
+.ekran-srodek { display: flex; align-items: center; }
+.tresc-srodek { width: 100%; }
+.zdania p { font-size: 20px; margin: 12px 0 0; }
+.punkty { font-size: 19px; font-weight: 600; color: var(--dobrze); margin: 20px 0 0; }
+.sloik-rysunek {
+  width: 140px; height: 180px; margin: 24px 0 8px; border: 4px solid var(--obwodka); border-top-width: 10px;
+  border-radius: 18px 18px 34px 34px; position: relative; overflow: hidden; background: var(--karta);
+}
+.sloik-wypelnienie { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--skala-3); transition: height .6s ease; }
+
+/* Formularze */
+.formularz { display: grid; gap: 6px; max-width: 420px; }
+.pole-etykieta { font-size: 15px; font-weight: 600; margin-top: 10px; }
+.pole { min-height: 48px; padding: 10px 14px; border: 1px solid var(--obwodka); border-radius: 12px; background: var(--karta); font-size: 18px; width: 100%; }
+.pole-pin { letter-spacing: .3em; font-size: 24px; max-width: 220px; }
+
+/* Rodzice */
+.ekran-rodzice { max-width: 760px; }
+.rodzice-gora { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.podsumowanie { margin: 8px 0 16px; color: var(--drugi); }
+.zakladki { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.zakladki button {
+  border: 0; border-radius: 999px; padding: 8px 16px; min-height: 40px; background: var(--pole); font-size: 15px; font-weight: 600;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+}
+.zakladki button[aria-selected="true"] { background: var(--tekst); color: var(--tlo); }
+.siatka-ramka, .tabela-ramka { overflow-x: auto; }
+.siatka { border-collapse: separate; border-spacing: 3px; font-variant-numeric: tabular-nums; }
+.siatka th { font-size: 14px; color: var(--drugi); font-weight: 600; padding: 2px 4px; }
+.siatka td {
+  width: 64px; height: 50px; text-align: center; border-radius: 8px; background: var(--pole);
+  font-size: 15px; font-weight: 600; line-height: 1.15; color: var(--tekst);
+}
+.siatka td small { display: block; font-size: 11px; font-weight: 500; }
+.siatka td.p0 { background: color-mix(in srgb, var(--skala-1) 42%, var(--karta)); }
+.siatka td.p1 { background: color-mix(in srgb, var(--skala-2) 42%, var(--karta)); }
+.siatka td.p2, .siatka td.p3 { background: color-mix(in srgb, var(--skala-3) 42%, var(--karta)); }
+.siatka td.p4 { background: color-mix(in srgb, var(--skala-4) 42%, var(--karta)); }
+.siatka td.p5 { background: var(--lider); color: var(--na-liderze); }
+.legenda { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 14px; color: var(--drugi); }
+.legenda span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--k); }
+.legenda span.bez-koloru { flex-basis: 100%; }
+.legenda span.bez-koloru::before { display: none; }
+.tabela { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+.tabela th, .tabela td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--obwodka); white-space: nowrap; }
+.tabela th { font-size: 13px; color: var(--drugi); cursor: grab; user-select: none; -webkit-user-select: none; }
+.historia { padding-left: 18px; }
+.historia li { margin: 4px 0; }
+
+@media (min-width: 700px) {
+  .kafle { grid-template-columns: 1fr 1fr; }
+  .kafel-glowny { grid-column: 1 / -1; }
+}
+@media (max-height: 700px) {
+  .ekran-sesja { gap: 8px; }
+  .informacja { font-size: 18px; margin-top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
