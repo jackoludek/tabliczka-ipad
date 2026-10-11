@@ -449,7 +449,7 @@
   function pokazPin() {
     pinTryb = stan.ustawienia.pin ? 'wpisz' : 'ustaw';
     $('pin-tytul').textContent = 'Dla rodziców';
-    $('pin-opis').textContent = pinTryb === 'ustaw' ? 'Ustaw PIN dla rodziców, od 4 do 8 cyfr. Dziecko go nie zna.' : 'Wpisz PIN.';
+    $('pin-opis').textContent = pinTryb === 'ustaw' ? 'Ustaw PIN dla rodziców, od 4 do 8 cyfr. Dziecko go nie zna.' : 'Tu są postępy i ustawienia.';
     $('pin-pole').value = ''; $('pin-blad').textContent = '';
     pokaz('pin');
     setTimeout(() => $('pin-pole').focus(), 50);

@@ -225,7 +225,8 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 
 /* Formularze */
 .formularz { display: grid; gap: 6px; max-width: 420px; }
-.pole-etykieta { font-size: 15px; font-weight: 600; margin-top: 10px; }
+.pole-etykieta { display: block; font-size: 15px; font-weight: 600; margin-top: 10px; }
+#pin-formularz .pole-etykieta { margin: 24px 0 6px; }
 .pole { min-height: 48px; padding: 10px 14px; border: 1px solid var(--obwodka); border-radius: 12px; background: var(--karta); font-size: 18px; width: 100%; }
 .pole-pin { letter-spacing: .3em; font-size: 24px; max-width: 220px; }
 
