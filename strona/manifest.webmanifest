@@ -1,5 +1,5 @@
 {
-  "name": "Mnożenie i dzielenie",
+  "name": "Tabliczka",
   "short_name": "Tabliczka",
   "description": "Mnożenie i dzielenie w krótkich sesjach, bez pośpiechu.",
   "lang": "pl",
@@ -12,7 +12,7 @@
   "icons": [
     { "src": "ikona-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "ikona-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "ikona-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "ikona-maskowalna.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
     { "src": "ikona.svg", "sizes": "any", "type": "image/svg+xml" }
   ]
 }

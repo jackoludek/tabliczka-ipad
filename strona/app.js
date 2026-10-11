@@ -93,7 +93,9 @@
     $('przycisk-slupek').hidden = !m.slupek;
     if (m.reszta) {
       const lr = S.liczby(stan.dzialania, teraz, 'reszta');
-      $('reszta-opis').textContent = lr.widziane === 0 ? 'Nowe! Na przykład 47 : 5 = 9 r. 2' : `Pewnych ${lr.pewne + lr.mistrz} z ${lr.wszystkich} · na przykład 47 : 5`;
+      // Jak na powitaniu: liczba pewnych dopiero wtedy, gdy jest się czym pochwalić.
+      const pewneR = lr.pewne + lr.mistrz;
+      $('reszta-opis').textContent = lr.widziane === 0 ? 'Nowe! Na przykład 47 : 5 = 9 r. 2' : pewneR > 0 ? `Pewnych ${pewneR} z ${lr.wszystkich}` : 'Na przykład 47 : 5 = 9 r. 2';
     }
     if (m.slupek) $('slupek-opis').textContent = `Poziom ${stan.slupek.poziom}: ${S.POZIOMY_SLUPKA[stan.slupek.poziom]}`;
   }
@@ -464,7 +466,18 @@
     pokazRodzicow();
   }
 
-  const KLASA = r => (r && r.proby > 0 ? `p${r.pudelko}` : '');
+  // Jedne słowa i jeden kolor na stan działania: podsumowanie, legenda, siatki i dymki mówią to samo.
+  // Kolory jak światła: czerwony nie umie, żółty uczy się, zielony pewne; fiolet to mistrz (reguła o tabelach).
+  const STANY = {
+    niewidziane: { slowo: 'jeszcze nie było', kolor: 'var(--pole)' },
+    nowe: { slowo: 'jeszcze nie umie', kolor: 'var(--skala-1)' },
+    wolne: { slowo: 'uczy się', kolor: 'var(--skala-3)' },
+    pewne: { slowo: 'pewne', kolor: 'var(--skala-4)' },
+    mistrz: { slowo: 'mistrz', kolor: 'var(--lider)' },
+  };
+  const KLASA = r => { const s = S.status(r); return s === 'niewidziane' ? '' : `st-${s}`; };
+  /** „mistrz 3, pewne 9, uczy się 20, jeszcze nie było 68”: od najlepszego, zera pominięte. */
+  const stanySlowami = l => ['mistrz', 'pewne', 'wolne', 'nowe', 'niewidziane'].filter(k => l[k] > 0).map(k => `${STANY[k].slowo} ${l[k]}`).join(', ');
   function czas(ms) { return ms === null ? '' : `${(ms / 1000).toLocaleString('pl-PL', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} s`; }
 
   function siatka(tabela, typ) {
@@ -484,7 +497,7 @@
         const sr = S.sredniCzas(r);
         td.textContent = typ === 'm' ? String(a * b) : `${a * b}:${a}`;
         if (r && r.proby > 0) { const sm = document.createElement('small'); sm.textContent = sr === null ? 'jeszcze nie' : czas(sr); td.appendChild(sm); }
-        const opis = { niewidziane: 'jeszcze nie było', nowe: 'jeszcze nie umie', wolne: 'umie, ale niepewnie albo wolno', pewne: 'pewne', mistrz: 'mistrz' }[S.status(r)];
+        const opis = STANY[S.status(r)].slowo;
         td.title = `${typ === 'm' ? `${a} × ${b}` : `${a * b} : ${a}`}: ${opis}${r && r.proby ? `, prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
       }
     }
@@ -508,20 +521,22 @@
         td.textContent = a === 2 ? String(a * b + 1) : `${a * b + 1}–${a * b + a - 1}`;
         const sr = S.sredniCzas(r);
         if (r && r.proby > 0) { const sm = document.createElement('small'); sm.textContent = sr === null ? 'jeszcze nie' : czas(sr); td.appendChild(sm); }
-        td.title = `${S.nazwa(S.dzialanie(id))}: ${S.status(r)}${r && r.proby ? `, prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
+        td.title = `${S.nazwa(S.dzialanie(id))}: ${STANY[S.status(r)].slowo}${r && r.proby ? `, prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
       }
     }
   }
 
-  const OPIS_MODULU = (wlaczony, auto, wybor) => `Teraz: ${wlaczony ? 'włączone' : 'wyłączone'}${wybor === 'auto' ? (auto ? ' (otworzyło się samo)' : ' (otworzy się samo)') : ''}.`;
+  // Opis pod wyborem modułu tylko przy „Samo”: przy „Włączone” i „Wyłączone” wszystko mówi sam wybór.
+  const OPIS_MODULU = (wybor, otwarty, pewnych, prog, wszystkich, czego) => (wybor !== 'auto' ? ''
+    : otwarty ? 'Otworzyło się samo.' : `Otworzy się samo, gdy pewnych będzie ${prog} z ${wszystkich} ${czego}. Teraz pewnych: ${pewnych}.`);
 
   function panelModulow() {
     const u = stan.ustawienia, m = S.odblokowane(stan.dzialania, u);
     $('modul-reszta').value = u.moduly.reszta; $('modul-slupek').value = u.moduly.slupek;
-    $('modul-reszta-info').textContent = `${OPIS_MODULU(m.reszta, m.auto.reszta, u.moduly.reszta)} Pewnych dzieleń z tabliczki: ${m.pewneDzielenia} z 64, próg 48.`;
-    $('modul-slupek-info').textContent = `${OPIS_MODULU(m.slupek, m.auto.slupek, u.moduly.slupek)} Pewnych rodzin z resztą: ${m.pewneReszty} z 72, próg 36.`;
+    $('modul-reszta-info').textContent = OPIS_MODULU(u.moduly.reszta, m.auto.reszta, m.pewneDzielenia, 48, 64, 'dzieleń z tabliczki');
+    $('modul-slupek-info').textContent = OPIS_MODULU(u.moduly.slupek, m.auto.slupek, m.pewneReszty, 36, 72, 'działań z resztą');
     $('u-zadan').value = u.zadanSlupka;
-    $('slupek-poziom').textContent = `Poziom ${stan.slupek.poziom} z 4: ${S.POZIOMY_SLUPKA[stan.slupek.poziom]}. Zrobionych zadań: ${stan.slupek.zadan || 0}. Poziom rośnie po dwóch zadaniach z najwyżej jedną pomyłką, spada po zadaniu z czterema.`;
+    $('slupek-poziom').textContent = `Poziom ${stan.slupek.poziom} z 4: ${S.POZIOMY_SLUPKA[stan.slupek.poziom]}. Zrobionych zadań: ${stan.slupek.zadan || 0}.`;
     const ul = $('slupek-pomylki'); ul.textContent = '';
     const h = (stan.slupek.historia || []).slice(-10).reverse();
     if (!h.length) { const li = document.createElement('li'); li.textContent = 'Jeszcze nie było zadań.'; ul.appendChild(li); }
@@ -534,7 +549,7 @@
 
   function legenda(el) {
     el.textContent = '';
-    for (const [k, t] of [['var(--pole)', 'jeszcze nie było'], ['var(--skala-1)', 'nie umie'], ['var(--skala-2)', 'umie od niedawna'], ['var(--skala-3)', 'prawie pewne'], ['var(--skala-4)', 'pewne'], ['var(--lider)', 'mistrz']]) {
+    for (const { kolor: k, slowo: t } of Object.values(STANY)) {
       const s = document.createElement('span'); s.style.setProperty('--k', k); s.textContent = t; el.appendChild(s);
     }
     const sm = document.createElement('span'); sm.className = 'bez-koloru'; sm.textContent = 'Mała liczba: średni czas dobrej odpowiedzi.'; el.appendChild(sm);
@@ -585,17 +600,20 @@
   async function pokazRodzicow() {
     const teraz = Date.now(), l = S.liczby(stan.dzialania, teraz);
     const ost = stan.sesje[stan.sesje.length - 1];
-    const lr = S.liczby(stan.dzialania, teraz, 'reszta');
-    const dodatki = [];
-    if (lr.widziane) dodatki.push(`Z resztą: pewne ${lr.pewne + lr.mistrz} z 72.`);
-    if (stan.slupek.zadan) dodatki.push(`Słupek: poziom ${stan.slupek.poziom}, zadań ${stan.slupek.zadan}.`);
-    $('rodzice-podsumowanie').textContent = `Sprawdzone ${l.widziane} ze 100 działań. Pewne ${l.pewne + l.mistrz}, niepewne albo wolne ${l.wolne}, jeszcze nie umie ${l.nowe}. ${dodatki.join(' ')}${dodatki.length ? ' ' : ''}Sesji: ${stan.sesje.length}${ost ? `, ostatnia ${new Date(ost.koniec).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })}` : ''}.`;
+    // Dwie linie: stan tabliczki tymi samymi słowami co legenda i kiedy była ostatnia sesja.
+    // Z resztą i słupek mają swoje liczby w swoich zakładkach.
+    $('rodzice-podsumowanie').textContent = `Tabliczka: ${stanySlowami(l)}.`;
+    $('rodzice-sesje').textContent = ost
+      ? `Ostatnia sesja ${new Date(ost.koniec).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })}, razem ${stan.sesje.length}.`
+      : 'Jeszcze nie było sesji.';
     siatka($('siatka-mnozenie'), 'm'); siatka($('siatka-dzielenie'), 'd'); siatkaReszt($('siatka-reszta'));
     legenda($('legenda-mnozenie')); legenda($('legenda-dzielenie')); legenda($('legenda-reszta'));
     panelModulow();
     const u = stan.ustawienia;
     $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
     $('nagroda-info').textContent = `W słoiku jest ${ilePkt(stan.sloik.punkty)}.`;
+    $('imie-info').textContent = 'Widać je na powitaniu.';
+    for (const id of ['bonus-info', 'pin-info', 'kolejnosc-info', 'eksport-info']) $(id).textContent = '';
     historiaSloika();
     naglowekTabeli();
     pokaz('rodzice');
@@ -610,7 +628,7 @@
   }
 
   // Ustawienia słoika zapisują się od razu po zmianie pola, tak jak moduły (bez przycisku „Zapisz”).
-  function zapiszNagrode(ev) {
+  function zapiszNagrode(ev, info = 'nagroda-info') {
     if (ev) ev.preventDefault();
     const u = stan.ustawienia;
     const liczba = (v, min, max, dom) => { const n = Math.round(Number(v)); return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : dom; };
@@ -620,7 +638,9 @@
     u.celPunkty = liczba($('u-cel').value, 10, 10000, u.celPunkty);
     u.celOpis = $('u-opis').value.trim().slice(0, 40) || u.celOpis;
     zapisz();
-    $('nagroda-info').textContent = 'Zapisane.';
+    // Pola pokazują to, co naprawdę zapisane (na przykład 5 zamiast wpisanych 50 sesji).
+    $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
+    $(info).textContent = 'Zapisane.';
   }
 
   async function wymien() {
@@ -636,13 +656,13 @@
 
   function dodajBonus() {
     const n = Math.round(Number($('u-bonus').value));
-    if (!Number.isFinite(n) || n < 1 || n > 500) { $('nagroda-info').textContent = 'Bonus to od 1 do 500 punktów.'; return; }
+    if (!Number.isFinite(n) || n < 1 || n > 500) { $('bonus-info').textContent = 'Wpisz od 1 do 500 punktów.'; return; }
     const opis = $('u-bonus-opis').value.trim().slice(0, 40);
     stan.sloik.punkty += n;
     stan.sloik.historia.push({ ts: Date.now(), zmiana: n, powod: 'bonus', opis });
     zapisz(); historiaSloika();
     $('u-bonus').value = ''; $('u-bonus-opis').value = '';
-    $('nagroda-info').textContent = `Dodane ${ilePkt(n)}. W słoiku jest ${stan.sloik.punkty}.`;
+    $('bonus-info').textContent = `Dodane ${ilePkt(n)}. W słoiku jest ${stan.sloik.punkty}.`;
   }
 
   async function plikCsv() {
@@ -722,7 +742,8 @@
     $('rodzice-wroc').addEventListener('click', () => { odswiezStart(); pokaz('start'); });
     $('zakladki').addEventListener('click', ev => { const b = ev.target.closest('[data-id]'); if (b) wybierzZakladke(b.dataset.id); });
     $('nagroda-formularz').addEventListener('submit', zapiszNagrode);
-    for (const id of ['u-imie', 'u-punkty', 'u-sesji', 'u-cel', 'u-opis']) $(id).addEventListener('change', () => zapiszNagrode());
+    for (const id of ['u-punkty', 'u-sesji', 'u-cel', 'u-opis']) $(id).addEventListener('change', () => zapiszNagrode());
+    $('u-imie').addEventListener('change', () => zapiszNagrode(null, 'imie-info'));
     $('wymien').addEventListener('click', wymien);
     $('dodaj-bonus').addEventListener('click', dodajBonus);
     $('pobierz-csv').addEventListener('click', pobierz);
@@ -732,12 +753,12 @@
     }
     $('zmien-pin').addEventListener('click', () => {
       const v = $('nowy-pin').value.trim();
-      if (!/^[0-9]{4,8}$/.test(v)) { $('dane-info').textContent = 'PIN to od 4 do 8 cyfr.'; return; }
-      stan.ustawienia.pin = v; zapisz(); $('nowy-pin').value = ''; $('dane-info').textContent = 'PIN zmieniony.';
+      if (!/^[0-9]{4,8}$/.test(v)) { $('pin-info').textContent = 'Wpisz od 4 do 8 cyfr.'; return; }
+      stan.ustawienia.pin = v; zapisz(); $('nowy-pin').value = ''; $('pin-info').textContent = 'PIN zmieniony.';
     });
     $('przywroc-kolejnosc').addEventListener('click', () => {
       for (const k of Object.values(kolejnosci)) k.przywroc();
-      $('dane-info').textContent = 'Kolejność przywrócona.';
+      $('kolejnosc-info').textContent = 'Kolejność przywrócona.';
     });
     $('wyczysc').addEventListener('click', wyczysc);
 

@@ -18,7 +18,7 @@
   --dobrze: #187331;
   --dobrze-tlo: #e3f5e8;
   --pokaz-tlo: #e8f1fc;
-  --skala-1: #ff383c; --skala-2: #ff8d28; --skala-3: #ffcc00; --skala-4: #34c759;
+  --skala-1: #ff383c; --skala-3: #ffcc00; --skala-4: #34c759;
   --lider: #a843db; --na-liderze: #ffffff;
   --niszczy: #c9001a;
   --okno: #ffffff; --pole-okno: #e8e8ed;
@@ -40,7 +40,7 @@
     --dobrze: #30d158;
     --dobrze-tlo: #0d2a16;
     --pokaz-tlo: #0a1f36;
-    --skala-1: #ff4245; --skala-2: #ff9230; --skala-3: #ffd600; --skala-4: #30d158;
+    --skala-1: #ff4245; --skala-3: #ffd600; --skala-4: #30d158;
     --niszczy: #ff6961;
     --okno: #1c1c1e; --pole-okno: #2c2c2e;
     --cien: none;
@@ -234,6 +234,11 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 .ekran-rodzice { max-width: 760px; }
 
 .podsumowanie { margin: 8px 0 16px; color: var(--drugi); }
+.podsumowanie-stan { display: block; color: var(--tekst); }
+/* Krótkie liczby po dwie w rzędzie; etykiety mogą się zawinąć, pola i tak stoją w jednej linii. */
+.formularz-szeroki { max-width: 560px; }
+.pola-dwa, .pola-bonus { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; align-items: end; }
+.pola-bonus { grid-template-columns: 7.5rem 1fr; }
 .zakladki { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
 .zakladki button {
   border: 0; border-radius: 999px; padding: 8px 14px; min-height: 40px; background: var(--pole); font-size: 15px; font-weight: 600;
@@ -242,17 +247,17 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 .zakladki button[aria-selected="true"] { background: var(--tekst); color: var(--tlo); }
 .siatka-ramka, .tabela-ramka { overflow-x: auto; }
 .siatka { border-collapse: separate; border-spacing: 3px; font-variant-numeric: tabular-nums; }
-.siatka th { font-size: 14px; color: var(--drugi); font-weight: 600; padding: 2px 4px; }
+.siatka th { font-size: 14px; color: var(--drugi); font-weight: 600; padding: 2px 4px; white-space: nowrap; }
 .siatka td {
   width: 64px; height: 50px; text-align: center; border-radius: 8px; background: var(--pole);
   font-size: 15px; font-weight: 600; line-height: 1.15; color: var(--tekst);
 }
 .siatka td small { display: block; font-size: 11px; font-weight: 500; }
-.siatka td.p0 { background: color-mix(in srgb, var(--skala-1) 42%, var(--karta)); }
-.siatka td.p1 { background: color-mix(in srgb, var(--skala-2) 42%, var(--karta)); }
-.siatka td.p2, .siatka td.p3 { background: color-mix(in srgb, var(--skala-3) 42%, var(--karta)); }
-.siatka td.p4 { background: color-mix(in srgb, var(--skala-4) 42%, var(--karta)); }
-.siatka td.p5 { background: var(--lider); color: var(--na-liderze); }
+/* Stan działania: te same słowa w legendzie, podsumowaniu i dymkach (STANY w app.js). */
+.siatka td.st-nowe { background: color-mix(in srgb, var(--skala-1) 42%, var(--karta)); }
+.siatka td.st-wolne { background: color-mix(in srgb, var(--skala-3) 42%, var(--karta)); }
+.siatka td.st-pewne { background: color-mix(in srgb, var(--skala-4) 42%, var(--karta)); }
+.siatka td.st-mistrz { background: var(--lider); color: var(--na-liderze); }
 .legenda { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 14px; color: var(--drugi); }
 .legenda span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--k); }
 .legenda span.bez-koloru { flex-basis: 100%; }

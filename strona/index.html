@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="ikona-180.png">
 <link rel="icon" href="ikona.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styl.css">
-<title>Mnożenie i dzielenie</title>
+<title>Tabliczka</title>
 </head>
 <body>
 <p class="tylko-czytnik" id="ogloszenia" aria-live="polite"></p>
@@ -156,7 +156,7 @@
 <main id="rodzice" class="ekran ekran-rodzice" hidden>
   <nav class="nawigacja"><button class="cichy wstecz" id="rodzice-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>Wróć</button></nav>
   <h1 tabindex="-1">Dla rodziców</h1>
-  <p class="podsumowanie" id="rodzice-podsumowanie"></p>
+  <p class="podsumowanie"><span class="podsumowanie-stan" id="rodzice-podsumowanie"></span> <span id="rodzice-sesje"></span></p>
   <div class="zakladki" id="zakladki" role="tablist" aria-label="Widoki. Zakładki można przestawiać: przeciągnij albo Alt i strzałka.">
     <button role="tab" data-id="mnozenie" type="button" aria-selected="true">Mnożenie</button>
     <button role="tab" data-id="dzielenie" type="button" aria-selected="false">Dzielenie</button>
@@ -202,6 +202,7 @@
     </div>
     <h2>Poziom</h2>
     <p id="slupek-poziom"></p>
+    <p class="drugi">Poziom rośnie po dwóch zadaniach z najwyżej jedną pomyłką, a spada po zadaniu z czterema.</p>
     <h2>Pomyłki w ostatnich zadaniach</h2>
     <ul class="historia" id="slupek-pomylki"></ul>
   </section>
@@ -217,43 +218,47 @@
     <div class="tabela-ramka"><table class="tabela" id="tabela-odpowiedzi"><thead><tr id="tabela-naglowek"></tr></thead><tbody id="tabela-cialo"></tbody></table></div>
   </section>
   <section class="panel" id="panel-nagroda" role="tabpanel" hidden>
-    <form id="nagroda-formularz" class="formularz">
-      <label class="pole-etykieta" for="u-imie">Imię dziecka</label>
-      <input class="pole" id="u-imie" maxlength="20">
-      <label class="pole-etykieta" for="u-punkty">Punkty za skończoną sesję</label>
-      <input class="pole" id="u-punkty" type="number" min="1" max="100" inputmode="numeric">
-      <label class="pole-etykieta" for="u-sesji">Ile sesji dziennie daje punkty</label>
-      <input class="pole" id="u-sesji" type="number" min="1" max="5" inputmode="numeric">
-      <label class="pole-etykieta" for="u-cel">Ile punktów do nagrody</label>
-      <input class="pole" id="u-cel" type="number" min="10" max="10000" inputmode="numeric">
-      <label class="pole-etykieta" for="u-opis">Nagroda</label>
-      <input class="pole" id="u-opis" maxlength="40">
-      <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button></div>
+    <form id="nagroda-formularz" class="formularz formularz-szeroki">
+      <div class="pola-dwa">
+        <div><label class="pole-etykieta" for="u-punkty">Punkty za sesję</label><input class="pole" id="u-punkty" type="number" min="1" max="100" inputmode="numeric"></div>
+        <div><label class="pole-etykieta" for="u-sesji">Sesji z punktami na dzień</label><input class="pole" id="u-sesji" type="number" min="1" max="5" inputmode="numeric"></div>
+        <div><label class="pole-etykieta" for="u-cel">Punktów do nagrody</label><input class="pole" id="u-cel" type="number" min="10" max="10000" inputmode="numeric"></div>
+        <div><label class="pole-etykieta" for="u-opis">Nagroda</label><input class="pole" id="u-opis" maxlength="40"></div>
+      </div>
       <p class="drugi" id="nagroda-info" aria-live="polite"></p>
+      <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button></div>
       <h2>Bonus</h2>
-      <p class="drugi">Od czasu do czasu, bez zapowiedzi. Nie liczy się do dziennego limitu sesji.</p>
-      <label class="pole-etykieta" for="u-bonus">Ile punktów</label>
-      <input class="pole" id="u-bonus" type="number" min="1" max="500" inputmode="numeric">
-      <label class="pole-etykieta" for="u-bonus-opis">Za co (dziecko to zobaczy)</label>
-      <input class="pole" id="u-bonus-opis" maxlength="40" placeholder="na przykład: za cały tydzień">
-      <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="dodaj-bonus">Dodaj do słoika</button></div>
+      <p class="drugi">Nie liczy się do dziennego limitu sesji.</p>
+      <div class="pola-bonus">
+        <div><label class="pole-etykieta" for="u-bonus">Punkty</label><input class="pole" id="u-bonus" type="number" min="1" max="500" inputmode="numeric"></div>
+        <div><label class="pole-etykieta" for="u-bonus-opis">Za co (dziecko to zobaczy)</label><input class="pole" id="u-bonus-opis" maxlength="40" placeholder="na przykład za cały tydzień"></div>
+      </div>
+      <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="dodaj-bonus">Dodaj do słoika</button></div>
+      <p class="drugi" id="bonus-info" aria-live="polite"></p>
     </form>
     <h2>Historia słoika</h2>
     <ul class="historia" id="sloik-historia"></ul>
   </section>
   <section class="panel" id="panel-dane" role="tabpanel" hidden>
+    <div class="formularz">
+      <label class="pole-etykieta" for="u-imie">Imię dziecka</label>
+      <input class="pole" id="u-imie" maxlength="20" autocomplete="off">
+      <p class="drugi" id="imie-info" aria-live="polite">Widać je na powitaniu.</p>
+    </div>
     <h2>PIN</h2>
     <div class="formularz">
-      <label class="pole-etykieta" for="nowy-pin">Nowy PIN</label>
-      <input class="pole pole-pin" id="nowy-pin" type="password" inputmode="numeric" maxlength="8">
-      <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="zmien-pin">Zmień PIN</button></div>
+      <label class="pole-etykieta" for="nowy-pin">Nowy PIN, od 4 do 8 cyfr</label>
+      <input class="pole pole-pin" id="nowy-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password">
+      <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="zmien-pin">Zmień PIN</button></div>
+      <p class="drugi" id="pin-info" aria-live="polite"></p>
     </div>
     <h2>Kolejność</h2>
-    <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="przywroc-kolejnosc">Przywróć kolejność kafelków i kolumn</button></div>
+    <p class="drugi">Kafelki na starcie, zakładki tutaj i kolumny tabeli.</p>
+    <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="przywroc-kolejnosc">Przywróć kolejność</button></div>
+    <p class="drugi" id="kolejnosc-info" aria-live="polite"></p>
     <h2>Od nowa</h2>
     <p class="drugi">Kasuje wszystkie odpowiedzi, słoik i ustawienia na tym urządzeniu.</p>
-    <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc">Wyczyść wszystko…</button></div>
-    <p class="drugi" id="dane-info" aria-live="polite"></p>
+    <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc">Wyczyść wszystko…</button></div>
   </section>
 </main>
 
