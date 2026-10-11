@@ -20,6 +20,8 @@
   --pokaz-tlo: #e8f1fc;
   --skala-1: #ff383c; --skala-2: #ff8d28; --skala-3: #ffcc00; --skala-4: #34c759;
   --lider: #a843db; --na-liderze: #ffffff;
+  --niszczy: #c9001a;
+  --okno: #ffffff; --pole-okno: #e8e8ed;
   --cien: 0 1px 2px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .06);
   --promien: 18px;
 }
@@ -39,6 +41,8 @@
     --dobrze-tlo: #0d2a16;
     --pokaz-tlo: #0a1f36;
     --skala-1: #ff4245; --skala-2: #ff9230; --skala-3: #ffd600; --skala-4: #30d158;
+    --niszczy: #ff6961;
+    --okno: #1c1c1e; --pole-okno: #2c2c2e;
     --cien: none;
   }
 }
@@ -83,6 +87,26 @@ h2 { font-size: 20px; margin: 28px 0 10px; }
 }
 .przycisk-drugi { background: var(--pole); color: var(--tekst); }
 .cichy { background: none; border: 0; color: var(--akcent); font-size: 17px; font-weight: 500; padding: 10px 6px; min-height: 44px; }
+/* Kasowanie: czerwony napis na szarym (rola „destructive”), nigdy niebieski przycisk główny. */
+.przycisk-niszczy { color: var(--niszczy); }
+.przyciski-blisko { margin-top: 12px; }
+
+/* Wróć: zawsze w lewym górnym rogu, jak „Koniec” w sesji. */
+.nawigacja { margin-bottom: 8px; }
+.wstecz { display: inline-flex; align-items: center; gap: 6px; }
+.ikona-wstecz { width: 11px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Okno pytania: podniesione tło (w ciemnym o stopień jaśniejsze od czerni), przyciski w rzędzie, Anuluj pierwszy. */
+.okno {
+  width: min(420px, calc(100vw - 48px)); padding: 24px; border: 0; border-radius: 20px;
+  background: var(--okno); color: var(--tekst); box-shadow: 0 12px 40px rgba(0, 0, 0, .28);
+}
+.okno::backdrop { background: rgba(0, 0, 0, .45); }
+.okno h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.25; }
+.okno p { margin: 0; }
+.okno-przyciski { display: flex; gap: 8px; margin-top: 24px; }
+.okno-przyciski .przycisk { flex: 1 1 0; padding-inline: 12px; }
+.okno .przycisk-drugi { background: var(--pole-okno); }
 
 /* Start */
 .ekran-start { display: flex; flex-direction: column; gap: 28px; }
@@ -183,17 +207,21 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 .klawiatura .klawisz-cichy { font-size: 17px; font-weight: 500; }
 .klawiatura .klawisz-ok { grid-column: 1 / -1; background: var(--przycisk); color: var(--na-przycisku); font-size: 21px; }
 .klawiatura .klawisz-ok:active { filter: brightness(.92); }
+.ikona-usun { display: block; width: 30px; height: 22px; margin: auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* Po pomyłce czynny jest tylko „Dalej”. Przygaszone klawisze są nieczynne, więc nie muszą mieć kontrastu tekstu. */
+.czeka-dalej .klawiatura button:not(.klawisz-ok) { opacity: .35; pointer-events: none; }
 
 /* Ekrany środkowe */
-.ekran-srodek { display: flex; align-items: center; }
-.tresc-srodek { width: 100%; }
+.ekran-srodek { display: flex; flex-direction: column; }
+.tresc-srodek { width: 100%; margin-block: auto; }
 .zdania p { font-size: 20px; margin: 12px 0 0; }
 .punkty { font-size: 19px; font-weight: 600; color: var(--dobrze); margin: 20px 0 0; }
 .sloik-rysunek {
   width: 140px; height: 180px; margin: 24px 0 8px; border: 4px solid var(--obwodka); border-top-width: 10px;
   border-radius: 18px 18px 34px 34px; position: relative; overflow: hidden; background: var(--karta);
 }
-.sloik-wypelnienie { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--skala-3); transition: height .6s ease; }
+/* Punkty mają jeden kolor wszędzie: ten sam zielony co pasek na kafelku Słoik. */
+.sloik-wypelnienie { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--dobrze); transition: height .6s ease; }
 
 /* Formularze */
 .formularz { display: grid; gap: 6px; max-width: 420px; }
@@ -203,11 +231,11 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 
 /* Rodzice */
 .ekran-rodzice { max-width: 760px; }
-.rodzice-gora { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
 .podsumowanie { margin: 8px 0 16px; color: var(--drugi); }
 .zakladki { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
 .zakladki button {
-  border: 0; border-radius: 999px; padding: 8px 16px; min-height: 40px; background: var(--pole); font-size: 15px; font-weight: 600;
+  border: 0; border-radius: 999px; padding: 8px 14px; min-height: 40px; background: var(--pole); font-size: 15px; font-weight: 600;
   touch-action: manipulation; user-select: none; -webkit-user-select: none;
 }
 .zakladki button[aria-selected="true"] { background: var(--tekst); color: var(--tlo); }
@@ -229,7 +257,8 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 .legenda span.bez-koloru { flex-basis: 100%; }
 .legenda span.bez-koloru::before { display: none; }
 .tabela { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
-.tabela th, .tabela td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--obwodka); white-space: nowrap; }
+.tabela th, .tabela td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--obwodka); white-space: nowrap; }
+.tabela :is(th, td):first-child { padding-left: 0; }
 .tabela th { font-size: 13px; color: var(--drugi); cursor: grab; user-select: none; -webkit-user-select: none; }
 .historia { padding-left: 18px; }
 .historia li { margin: 4px 0; }

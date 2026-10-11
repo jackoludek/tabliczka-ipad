@@ -75,7 +75,7 @@
     <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
     <button type="button" data-k="nie-wiem" class="klawisz-cichy" id="nie-wiem">Nie wiem</button>
     <button type="button" data-k="0">0</button>
-    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę">⌫</button>
+    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę"><svg class="ikona-usun" viewBox="0 0 30 22" aria-hidden="true"><path d="M10 2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H10L2 11z"/><path d="m14.5 7 7 8m0-8-7 8"/></svg></button>
     <button type="button" data-k="ok" class="klawisz-ok" id="klawisz-ok">Sprawdź</button>
   </div>
 </main>
@@ -98,7 +98,7 @@
     <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
     <button type="button" data-k="nie-wiem" class="klawisz-cichy">Nie wiem</button>
     <button type="button" data-k="0">0</button>
-    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę">⌫</button>
+    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę"><svg class="ikona-usun" viewBox="0 0 30 22" aria-hidden="true"><path d="M10 2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H10L2 11z"/><path d="m14.5 7 7 8m0-8-7 8"/></svg></button>
     <button type="button" data-k="ok" class="klawisz-ok" id="slupek-ok">Sprawdź</button>
   </div>
 </main>
@@ -129,37 +129,33 @@
 
 <!-- Słoik -->
 <main id="sloik" class="ekran ekran-srodek" hidden>
+  <nav class="nawigacja"><button class="cichy wstecz" id="sloik-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>Wróć</button></nav>
   <div class="tresc-srodek">
     <p class="nad">Słoik</p>
     <h1 tabindex="-1"><span id="sloik-punkty">0</span> punktów</h1>
     <p class="wstep" id="sloik-cel"></p>
     <div class="sloik-rysunek" aria-hidden="true"><div class="sloik-wypelnienie" id="sloik-wypelnienie"></div></div>
     <p class="drugi" id="sloik-zasady"></p>
-    <div class="przyciski"><button class="przycisk" id="sloik-wroc" type="button">Wróć</button></div>
   </div>
 </main>
 
 <!-- PIN rodziców -->
 <main id="pin" class="ekran ekran-srodek" hidden>
+  <nav class="nawigacja"><button class="cichy wstecz" id="pin-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>Wróć</button></nav>
   <form class="tresc-srodek" id="pin-formularz" autocomplete="off">
     <h1 tabindex="-1" id="pin-tytul">Dla rodziców</h1>
     <p class="wstep" id="pin-opis">Wpisz PIN.</p>
     <label class="pole-etykieta" for="pin-pole">PIN</label>
     <input class="pole pole-pin" id="pin-pole" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" required>
     <p class="drugi" id="pin-blad" aria-live="assertive"></p>
-    <div class="przyciski">
-      <button class="przycisk" type="submit">Dalej</button>
-      <button class="przycisk przycisk-drugi" type="button" id="pin-wroc">Wróć</button>
-    </div>
+    <div class="przyciski"><button class="przycisk" type="submit">Dalej</button></div>
   </form>
 </main>
 
 <!-- Rodzice -->
 <main id="rodzice" class="ekran ekran-rodzice" hidden>
-  <header class="rodzice-gora">
-    <h1 tabindex="-1">Dla rodziców</h1>
-    <button class="cichy" id="rodzice-wroc" type="button">Wróć</button>
-  </header>
+  <nav class="nawigacja"><button class="cichy wstecz" id="rodzice-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>Wróć</button></nav>
+  <h1 tabindex="-1">Dla rodziców</h1>
   <p class="podsumowanie" id="rodzice-podsumowanie"></p>
   <div class="zakladki" id="zakladki" role="tablist" aria-label="Widoki. Zakładki można przestawiać: przeciągnij albo Alt i strzałka.">
     <button role="tab" data-id="mnozenie" type="button" aria-selected="true">Mnożenie</button>
@@ -168,7 +164,7 @@
     <button role="tab" data-id="slupek" type="button" aria-selected="false">Słupek</button>
     <button role="tab" data-id="odpowiedzi" type="button" aria-selected="false">Odpowiedzi</button>
     <button role="tab" data-id="nagroda" type="button" aria-selected="false">Słoik</button>
-    <button role="tab" data-id="dane" type="button" aria-selected="false">Dane</button>
+    <button role="tab" data-id="dane" type="button" aria-selected="false">Ustawienia</button>
   </div>
 
   <section class="panel" id="panel-mnozenie" role="tabpanel">
@@ -210,7 +206,14 @@
     <ul class="historia" id="slupek-pomylki"></ul>
   </section>
   <section class="panel" id="panel-odpowiedzi" role="tabpanel" hidden>
-    <p class="drugi">Ostatnie 60 odpowiedzi. Kolumny można przestawiać.</p>
+    <p class="drugi">W tabeli jest każda odpowiedź z czasem. Otwiera się w Excelu.</p>
+    <div class="przyciski przyciski-lewo przyciski-blisko">
+      <button class="przycisk" type="button" id="pobierz-csv">Pobierz tabelę</button>
+      <button class="przycisk przycisk-drugi" type="button" id="udostepnij-csv" hidden>Wyślij tabelę</button>
+    </div>
+    <p class="drugi" id="eksport-info" aria-live="polite"></p>
+    <h2>Ostatnie 60 odpowiedzi</h2>
+    <p class="drugi">Kolumny można przestawiać: przeciągnij nagłówek albo Alt i strzałka.</p>
     <div class="tabela-ramka"><table class="tabela" id="tabela-odpowiedzi"><thead><tr id="tabela-naglowek"></tr></thead><tbody id="tabela-cialo"></tbody></table></div>
   </section>
   <section class="panel" id="panel-nagroda" role="tabpanel" hidden>
@@ -225,10 +228,7 @@
       <input class="pole" id="u-cel" type="number" min="10" max="10000" inputmode="numeric">
       <label class="pole-etykieta" for="u-opis">Nagroda</label>
       <input class="pole" id="u-opis" maxlength="40">
-      <div class="przyciski przyciski-lewo">
-        <button class="przycisk" type="submit">Zapisz</button>
-        <button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button>
-      </div>
+      <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button></div>
       <p class="drugi" id="nagroda-info" aria-live="polite"></p>
       <h2>Bonus</h2>
       <p class="drugi">Od czasu do czasu, bez zapowiedzi. Nie liczy się do dziennego limitu sesji.</p>
@@ -242,11 +242,6 @@
     <ul class="historia" id="sloik-historia"></ul>
   </section>
   <section class="panel" id="panel-dane" role="tabpanel" hidden>
-    <p class="drugi">Każda odpowiedź z czasem. Plik otwiera się w Excelu.</p>
-    <div class="przyciski przyciski-lewo">
-      <button class="przycisk" type="button" id="pobierz-csv">Pobierz tabelę</button>
-      <button class="przycisk przycisk-drugi" type="button" id="udostepnij-csv" hidden>Wyślij tabelę</button>
-    </div>
     <h2>PIN</h2>
     <div class="formularz">
       <label class="pole-etykieta" for="nowy-pin">Nowy PIN</label>
@@ -256,11 +251,23 @@
     <h2>Kolejność</h2>
     <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="przywroc-kolejnosc">Przywróć kolejność kafelków i kolumn</button></div>
     <h2>Od nowa</h2>
-    <p class="drugi">Kasuje wszystkie odpowiedzi, słoik i ustawienia w tym telefonie.</p>
-    <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi" type="button" id="wyczysc">Wyczyść wszystko</button></div>
+    <p class="drugi">Kasuje wszystkie odpowiedzi, słoik i ustawienia na tym urządzeniu.</p>
+    <div class="przyciski przyciski-lewo"><button class="przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc">Wyczyść wszystko…</button></div>
     <p class="drugi" id="dane-info" aria-live="polite"></p>
   </section>
 </main>
+
+<!-- Pytanie przed rzadką, ważną zmianą (zamiast confirm() przeglądarki). Escape zamyka. -->
+<dialog class="okno" id="okno" aria-labelledby="okno-tytul" aria-describedby="okno-tresc">
+  <form method="dialog">
+    <h2 id="okno-tytul"></h2>
+    <p id="okno-tresc"></p>
+    <div class="okno-przyciski">
+      <button class="przycisk przycisk-drugi" value="nie" id="okno-anuluj">Anuluj</button>
+      <button class="przycisk" value="tak" id="okno-tak"></button>
+    </div>
+  </form>
+</dialog>
 
 <script src="silnik.js"></script>
 <script src="baza.js"></script>

@@ -26,7 +26,30 @@
   }
 
   function zapisz() {
-    if (!B.zapiszStan(stan)) ogloś('Telefon nie ma miejsca na zapis. Zwolnij trochę miejsca.');
+    if (!B.zapiszStan(stan)) ogloś('Brakuje miejsca na zapis. Zwolnij trochę miejsca w urządzeniu.');
+  }
+
+  /** Okno pytania przed rzadką, ważną zmianą. Przycisk nazywa skutek, Anuluj stoi pierwszy, Escape zamyka.
+   *  Przy kasowaniu przycisk jest czerwony, a fokus stoi na Anuluj. Zwraca obietnicę: true, gdy „tak”. */
+  function zapytaj({ tytul, tresc, tak, niszczy = false }) {
+    const d = $('okno'), t = $('okno-tak');
+    $('okno-tytul').textContent = tytul;
+    $('okno-tresc').textContent = tresc;
+    t.textContent = tak;
+    t.className = niszczy ? 'przycisk przycisk-drugi przycisk-niszczy' : 'przycisk';
+    return new Promise(ok => {
+      d.returnValue = '';
+      d.addEventListener('close', () => ok(d.returnValue === 'tak'), { once: true });
+      d.showModal();
+      (niszczy ? $('okno-anuluj') : t).focus();
+    });
+  }
+
+  /** Po pomyłce liczy się tylko „Dalej”: cyfry są przygaszone i nieczynne, żeby było widać, co teraz. */
+  function tylkoDalej(ekran, tak) {
+    const e = $(ekran);
+    e.classList.toggle('czeka-dalej', tak);
+    for (const b of e.querySelectorAll('.klawiatura button:not(.klawisz-ok)')) b.setAttribute('aria-disabled', String(tak));
   }
 
   // Słowo po liczbie, poprzedzone twardą spacją, żeby liczba nie została sama na końcu linii.
@@ -54,7 +77,7 @@
     $('start-tytul').textContent = u.imie ? `Cześć, ${u.imie}!` : 'Cześć!';
     let wstep;
     if (l.widziane === 0) wstep = 'Najpierw sprawdzimy, co już umiesz. Bez pośpiechu, zegara nie ma.';
-    else if (l.niewidziane > 0) wstep = `Sprawdzone już ${l.widziane} ze 100 działań. Pewnych masz ${l.pewne + l.mistrz}.`;
+    else if (l.niewidziane > 0) wstep = `Sprawdzone już ${l.widziane} ze 100 działań.${l.pewne + l.mistrz ? ` Pewnych masz ${l.pewne + l.mistrz}.` : ''}`;
     else if (l.doPowtorki > 0) wstep = `Na dziś czeka ${l.doPowtorki}\u00a0${dzialan(l.doPowtorki)} do powtórki. Pewnych masz ${l.pewne + l.mistrz} ze 100.`;
     else wstep = `Na dziś wszystko powtórzone. Pewnych masz ${l.pewne + l.mistrz} ze 100.`;
     $('start-wstep').textContent = wstep;
@@ -93,6 +116,7 @@
     const b = biezaceDzialanie();
     if (!b) { zakonczSesje(); return; }
     wpisane = ''; wpisaneR = ''; czesc = 'i'; tryb = 'pytanie'; uzytoPodpowiedzi = false;
+    tylkoDalej('sesja', false);
     const zReszta = b.d.typ === 'r';
     $('karta').classList.remove('dobrze', 'pokaz');
     $('karta').classList.toggle('z-reszta', zReszta);
@@ -190,6 +214,7 @@
         ? `${b.d.a} × ${poprawna} = ${b.d.a * poprawna}, a do ${b.d.a * poprawna + poprawnaR} zostaje ${poprawnaR}.`
         : S.sposob(b.d, b.w.odwroc);
       $('klawisz-ok').textContent = 'Dalej';
+      tylkoDalej('sesja', true);
       sesja._poOdpowiedzi = w;
       ogloś(`${czytaj(tresc)} to ${poprawna}${r ? `, reszty ${poprawnaR}` : ''}.`);
     }
@@ -252,6 +277,7 @@
   function nastepnyKrok() {
     clearTimeout(czekaS);
     wpisaneS = ''; trybS = zad.cur >= zad.zadanie.kroki.length ? 'gotowe' : 'pytanie';
+    tylkoDalej('slupek', trybS === 'gotowe');
     $('slupek-karta').classList.remove('dobrze', 'pokaz');
     $('slupek-podpowiedz').hidden = trybS !== 'pytanie';
     $('slupek-ok').textContent = 'Sprawdź';
@@ -348,6 +374,7 @@
     wpisaneS = String(k.odp); pokazPytanieS();
     $('slupek-info').textContent = (nieWiem ? 'Nic się nie stało. ' : '') + S.wyjasnienieKroku(k, d, nieWiem ? '' : wpisana);
     $('slupek-ok').textContent = 'Dalej';
+    tylkoDalej('slupek', true);
     // Dwie szybkie pomyłki pod rząd: chwila oddechu (nie częściej niż co 3 kroki).
     const dwie = sl.ostatnie.slice(-2);
     if (dwie.length === 2 && dwie.every(o => !o.ok && !o.nieWiem && o.ms < S.USTAWIENIA.ucieczkaMs) && sl.ostatnie.length - sl.ostatniaPrzerwa >= 3) {
@@ -514,7 +541,11 @@
   }
 
   const KOLUMNY = {
-    kiedy: { tytul: 'Kiedy', wartosc: o => new Date(o.ts).toLocaleString('pl-PL', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }) },
+    // Dziś sama godzina, wcześniej dzień i miesiąc: tabela mieści się wtedy na telefonie bez przewijania w bok.
+    kiedy: { tytul: 'Kiedy', wartosc: o => {
+      const d = new Date(o.ts), g = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+      return d.toDateString() === new Date().toDateString() ? g : `${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')} ${g}`;
+    } },
     dzialanie: { tytul: 'Działanie', wartosc: o => o.tresc },
     odpowiedz: { tytul: 'Odpowiedź', wartosc: o => (o.nieWiem ? 'nie wiem' : o.odpowiedz) },
     wynik: { tytul: 'Wynik', wartosc: o => (o.ok ? 'dobrze' : `inna, ${o.poprawna}`) },
@@ -578,8 +609,9 @@
     for (const p of document.querySelectorAll('.panel')) p.hidden = p.id !== `panel-${id}`;
   }
 
+  // Ustawienia słoika zapisują się od razu po zmianie pola, tak jak moduły (bez przycisku „Zapisz”).
   function zapiszNagrode(ev) {
-    ev.preventDefault();
+    if (ev) ev.preventDefault();
     const u = stan.ustawienia;
     const liczba = (v, min, max, dom) => { const n = Math.round(Number(v)); return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : dom; };
     u.imie = $('u-imie').value.trim().slice(0, 20);
@@ -591,9 +623,9 @@
     $('nagroda-info').textContent = 'Zapisane.';
   }
 
-  function wymien() {
+  async function wymien() {
     const u = stan.ustawienia, p = stan.sloik.punkty;
-    if (p < u.celPunkty && !confirm(`W słoiku jest ${p} z ${u.celPunkty} punktów. Wymienić mimo to?`)) return;
+    if (p > 0 && p < u.celPunkty && !(await zapytaj({ tytul: 'Wymienić przed celem?', tresc: `W słoiku jest ${p} z ${ilePkt(u.celPunkty)}. Wymiana zabierze ${ilePkt(p)}.`, tak: 'Wymień' }))) return;
     const ile = Math.min(p, u.celPunkty);
     if (ile <= 0) { $('nagroda-info').textContent = 'Słoik jest pusty.'; return; }
     stan.sloik.punkty -= ile;
@@ -623,22 +655,22 @@
   const NATYWNA = globalThis.TabliczkaAndroid || globalThis.TabliczkaNatywna || null;
 
   async function pobierz() {
-    if (NATYWNA) { $('dane-info').textContent = await NATYWNA.zapisz('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi())); return; }
+    if (NATYWNA) { $('eksport-info').textContent = await NATYWNA.zapisz('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi())); return; }
     const plik = await plikCsv();
     const url = URL.createObjectURL(plik);
     const a = document.createElement('a'); a.href = url; a.download = plik.name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
-    $('dane-info').textContent = 'Tabela pobrana.';
+    $('eksport-info').textContent = 'Tabela pobrana.';
   }
 
   async function udostepnij() {
-    if (NATYWNA) { $('dane-info').textContent = await NATYWNA.wyslij('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi())); return; }
-    try { await navigator.share({ files: [await plikCsv()], title: 'Tabliczka: odpowiedzi' }); $('dane-info').textContent = 'Wysłane.'; }
-    catch (e) { if (e && e.name !== 'AbortError') $('dane-info').textContent = 'Nie udało się wysłać. Użyj „Pobierz tabelę”.'; }
+    if (NATYWNA) { $('eksport-info').textContent = await NATYWNA.wyslij('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi())); return; }
+    try { await navigator.share({ files: [await plikCsv()], title: 'Tabliczka: odpowiedzi' }); $('eksport-info').textContent = 'Wysłane.'; }
+    catch (e) { if (e && e.name !== 'AbortError') $('eksport-info').textContent = 'Nie udało się wysłać. Użyj „Pobierz tabelę”.'; }
   }
 
   async function wyczysc() {
-    if (!confirm('Skasować wszystkie odpowiedzi, słoik i ustawienia w tym telefonie? Tego nie da się cofnąć.')) return;
+    if (!(await zapytaj({ tytul: 'Wyczyścić wszystko?', tresc: 'Znikną odpowiedzi, słoik i ustawienia na tym urządzeniu. Tego nie da się cofnąć.', tak: 'Wyczyść', niszczy: true }))) return;
     await B.wyczysc();
     stan = B.wczytajStan();
     odswiezStart(); pokaz('start');
@@ -690,6 +722,7 @@
     $('rodzice-wroc').addEventListener('click', () => { odswiezStart(); pokaz('start'); });
     $('zakladki').addEventListener('click', ev => { const b = ev.target.closest('[data-id]'); if (b) wybierzZakladke(b.dataset.id); });
     $('nagroda-formularz').addEventListener('submit', zapiszNagrode);
+    for (const id of ['u-imie', 'u-punkty', 'u-sesji', 'u-cel', 'u-opis']) $(id).addEventListener('change', () => zapiszNagrode());
     $('wymien').addEventListener('click', wymien);
     $('dodaj-bonus').addEventListener('click', dodajBonus);
     $('pobierz-csv').addEventListener('click', pobierz);
@@ -711,6 +744,8 @@
     // Klawiatura komputera: cyfry, Backspace, Enter, Escape.
     document.addEventListener('keydown', ev => {
       const e = document.body.dataset.ekran;
+      // Escape cofa ze Słoika, PIN-u i widoku rodziców (gdy nie ma otwartego pytania). W sesji nie: łatwo o pomyłkę.
+      if (ev.key === 'Escape' && !$('okno').open && (e === 'sloik' || e === 'pin' || e === 'rodzice')) { wstecz(); ev.preventDefault(); return; }
       if ((e !== 'sesja' && e !== 'slupek') || ev.altKey || ev.ctrlKey || ev.metaKey) return;
       const kl = e === 'slupek' ? klawiszSlupek : klawisz;
       if (/^[0-9]$/.test(ev.key)) { kl(ev.key); ev.preventDefault(); }

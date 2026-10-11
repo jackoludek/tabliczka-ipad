@@ -99,7 +99,7 @@ final class Ekran: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScrip
     func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         let a = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         a.addAction(UIAlertAction(title: "Anuluj", style: .cancel) { _ in completionHandler(false) })
-        a.addAction(UIAlertAction(title: "Tak", style: .default) { _ in completionHandler(true) })
+        a.addAction(UIAlertAction(title: "OK", style: .default) { _ in completionHandler(true) })
         present(a, animated: true)
     }
 
