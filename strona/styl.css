@@ -82,7 +82,8 @@ h2 { font-size: 20px; margin: 28px 0 10px; }
   background: var(--przycisk); color: var(--na-przycisku); font-size: 18px; font-weight: 600;
 }
 .przycisk-drugi { background: var(--pole); color: var(--tekst); }
-.cichy { background: none; border: 0; color: var(--akcent); font-size: 17px; font-weight: 500; padding: 10px 6px; min-height: 44px; }
+/* Cel dotyku co najmniej 48 px (reguła Jacka: 48 dp na telefonie). */
+.cichy { background: none; border: 0; color: var(--akcent); font-size: 17px; font-weight: 500; padding: 10px 6px; min-height: 48px; }
 /* Kasowanie: czerwony napis na szarym (rola „destructive”), nigdy niebieski przycisk główny. */
 .przycisk-niszczy { color: var(--niszczy); }
 .przyciski-blisko { margin-top: 12px; }
@@ -228,12 +229,15 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 .formularz-szeroki { max-width: 560px; }
 .pola-dwa, .pola-bonus { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; align-items: end; }
 .pola-bonus { grid-template-columns: 7.5rem 1fr; }
-.zakladki { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.zakladki { display: flex; gap: 8px 6px; flex-wrap: wrap; margin-bottom: 16px; }
 .zakladki button {
-  border: 0; border-radius: 999px; padding: 8px 14px; min-height: 40px; background: var(--pole); font-size: 15px; font-weight: 600;
+  border: 0; border-radius: 999px; padding: 8px 14px; min-height: 44px; background: var(--pole); font-size: 15px; font-weight: 600;
+  position: relative;
   touch-action: manipulation; user-select: none; -webkit-user-select: none;
 }
 .zakladki button[aria-selected="true"] { background: var(--tekst); color: var(--tlo); }
+/* Pigułka ma 44 px, a strefa dotyku 48 px: po 2 px w górę i w dół, w odstępie 8 px między rzędami, więc się nie nakładają. */
+.zakladki button::before { content: ""; position: absolute; inset: -2px 0; }
 .siatka-ramka, .tabela-ramka { overflow-x: auto; }
 .siatka { border-collapse: separate; border-spacing: 3px; font-variant-numeric: tabular-nums; }
 .siatka th { font-size: 14px; color: var(--drugi); font-weight: 600; padding: 2px 4px; white-space: nowrap; }
