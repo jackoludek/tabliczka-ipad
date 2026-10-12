@@ -53,6 +53,8 @@
     return 'punktów';
   }
   const ilePkt = n => `${n}\u00a0${liczbaPunktow(n)}`;
+  // Nagrodę wpisują rodzice („800 Robuxów”): liczba nie może zostać sama na końcu linii.
+  const bezPrzerwy = t => String(t).replace(/(\d) (?=\S)/g, '$1\u00a0');
 
   function dzialan(n) {
     const r10 = n % 10, r100 = n % 100;
@@ -79,7 +81,7 @@
       ? `Około 5 minut · za skończoną sesję ${ilePkt(u.punktyZaSesje)}`
       : 'Punkty na dziś już są w słoiku. Ćwiczyć i tak można.';
     const proc = Math.min(100, Math.round(100 * stan.sloik.punkty / Math.max(1, u.celPunkty)));
-    $('sloik-opis').textContent = `${stan.sloik.punkty} z ${ilePkt(u.celPunkty)} · ${u.celOpis}`;
+    $('sloik-opis').textContent = `${stan.sloik.punkty} z ${ilePkt(u.celPunkty)} · ${bezPrzerwy(u.celOpis)}`;
     $('sloik-pasek').style.width = proc + '%';
     const m = S.odblokowane(stan.dzialania, u);
     $('przycisk-reszta').hidden = !m.reszta;
@@ -432,7 +434,7 @@
     $('sloik-punkty').textContent = String(p);
     $('sloik-punkty').parentElement.lastChild.textContent = `\u00a0${liczbaPunktow(p)}`;
     const brak = Math.max(0, u.celPunkty - p);
-    $('sloik-cel').textContent = brak > 0 ? `Do nagrody (${u.celOpis}) brakuje ${ilePkt(brak)}.` : `Uzbierane! Nagroda: ${u.celOpis}. Powiedz rodzicom.`;
+    $('sloik-cel').textContent = brak > 0 ? `Do nagrody (${bezPrzerwy(u.celOpis)}) brakuje ${ilePkt(brak)}.` : `Uzbierane! Nagroda: ${bezPrzerwy(u.celOpis)}. Powiedz rodzicom.`;
     $('sloik-wypelnienie').style.height = Math.min(100, Math.round(100 * p / Math.max(1, u.celPunkty))) + '%';
     $('sloik-zasady').textContent = `Punkty są za skończone sesje, najwyżej ${u.sesjiDziennie} dziennie. Nie za szybkość i nie za wynik.`;
     pokaz('sloik');
