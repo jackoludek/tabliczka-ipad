@@ -107,6 +107,11 @@
     });
 
     return {
+      /** true, gdy kolejność różni się od domyślnej (wtedy „Przywróć kolejność” jest czynne). */
+      zmieniona() {
+        const dom = (kontener.dataset.domyslne || '').split(',').filter(Boolean).join(',');
+        return elementy().map(e => e.dataset.id).join(',') !== dom;
+      },
       przywroc() {
         try { localStorage.removeItem(zapis); } catch (e) { /* trudno */ }
         const k = (kontener.dataset.domyslne || '').split(',').filter(Boolean);

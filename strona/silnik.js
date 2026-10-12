@@ -558,14 +558,14 @@
   /** Wyjaśnienie po pomyłce w kroku (spokojne, z liczbami). */
   function wyjasnienieKroku(k, dzielnik, odp) {
     if (k.typ === 'podziel') {
-      if (k.biez < dzielnik) return `${k.biez} jest mniejsze od ${dzielnik}, więc zero razy. Zero też piszemy w wyniku.`;
+      if (k.biez < dzielnik) return `${k.biez} jest mniejsze od ${dzielnik}, więc zero razy. Zero też trzeba wpisać w wyniku.`;
       const o = Number(odp);
       if (odp !== '' && o * dzielnik > k.biez) return `${o} × ${dzielnik} = ${o * dzielnik}, a to więcej niż ${k.biez}.`;
       return `${k.odp} × ${dzielnik} = ${k.odp * dzielnik}. To najbliżej ${k.biez}, ale nie więcej.`;
     }
     if (k.typ === 'pomnoz') return `${k.q} × ${dzielnik} = ${k.odp}.`;
     if (k.typ === 'odejmij') return `${k.biez} − ${k.il} = ${k.odp}.`;
-    return `Następna cyfra to ${k.odp}. Dopisujemy ją obok.`;
+    return `Następna cyfra to ${k.odp}. Dopisz ją obok.`;
   }
 
   /** Nazwa pomyłki w kroku (dla rodziców). */

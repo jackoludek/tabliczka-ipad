@@ -29,20 +29,13 @@
     if (!B.zapiszStan(stan)) ogloś('Brakuje miejsca na zapis. Zwolnij trochę miejsca w urządzeniu.');
   }
 
-  /** Okno pytania przed rzadką, ważną zmianą. Przycisk nazywa skutek, Anuluj stoi pierwszy, Escape zamyka.
-   *  Przy kasowaniu przycisk jest czerwony, a fokus stoi na Anuluj. Zwraca obietnicę: true, gdy „tak”. */
-  function zapytaj({ tytul, tresc, tak, niszczy = false }) {
-    const d = $('okno'), t = $('okno-tak');
-    $('okno-tytul').textContent = tytul;
-    $('okno-tresc').textContent = tresc;
-    t.textContent = tak;
-    t.className = niszczy ? 'przycisk przycisk-drugi przycisk-niszczy' : 'przycisk';
-    return new Promise(ok => {
-      d.returnValue = '';
-      d.addEventListener('close', () => ok(d.returnValue === 'tak'), { once: true });
-      d.showModal();
-      (niszczy ? $('okno-anuluj') : t).focus();
-    });
+  // Bez okienek z pytaniami (reguła Jacka z 12.10.2026): program robi, o co poproszono, a wymianę
+  // i kasowanie da się cofnąć. Komunikat stoi przy rzeczy, której dotyczy, błąd jest czerwony, i znika sam.
+  const czasyKomunikatow = {};
+  function powiedz(id, tekst, blad = false) {
+    const el = $(id); clearTimeout(czasyKomunikatow[id]);
+    el.textContent = tekst; el.classList.toggle('blad', !!(tekst && blad));
+    if (tekst) czasyKomunikatow[id] = setTimeout(() => { if (el.textContent === tekst) { el.textContent = ''; el.classList.remove('blad'); } }, 6000);
   }
 
   /** Po pomyłce liczy się tylko „Dalej”: cyfry są przygaszone i nieczynne, żeby było widać, co teraz. */
@@ -76,7 +69,7 @@
     $('start-data').textContent = new Date(teraz).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' });
     $('start-tytul').textContent = u.imie ? `Cześć, ${u.imie}!` : 'Cześć!';
     let wstep;
-    if (l.widziane === 0) wstep = 'Najpierw sprawdzimy, co już umiesz. Bez pośpiechu, zegara nie ma.';
+    if (l.widziane === 0) wstep = 'Najpierw krótki sprawdzian tego, co już umiesz. Bez pośpiechu, zegara nie ma.';
     else if (l.niewidziane > 0) wstep = `Sprawdzone już ${l.widziane} ze 100 działań.${l.pewne + l.mistrz ? ` Pewnych masz ${l.pewne + l.mistrz}.` : ''}`;
     else if (l.doPowtorki > 0) wstep = `Na dziś czeka ${l.doPowtorki}\u00a0${dzialan(l.doPowtorki)} do powtórki. Pewnych masz ${l.pewne + l.mistrz} ze 100.`;
     else wstep = `Na dziś wszystko powtórzone. Pewnych masz ${l.pewne + l.mistrz} ze 100.`;
@@ -129,7 +122,7 @@
     $('informacja').textContent = '';
     $('sposob').textContent = '';
     $('klawisz-ok').textContent = zReszta ? 'Reszta →' : 'Sprawdź';
-    $('podpowiedz').hidden = false;
+    $('podpowiedz').disabled = false;
     pokazWpisane();
     const proc = Math.round(100 * sesja.i / Math.max(1, sesja.kolejka.length));
     $('postep-pasek').style.width = proc + '%';
@@ -200,7 +193,7 @@
       ok, nieWiem, ms, powtorka, podpowiedz: uzytoPodpowiedzi, uwagi,
     });
 
-    $('podpowiedz').hidden = true;
+    $('podpowiedz').disabled = true;
     if (ok) {
       tryb = 'dobrze';
       $('karta').classList.add('dobrze');
@@ -281,7 +274,7 @@
     wpisaneS = ''; trybS = zad.cur >= zad.zadanie.kroki.length ? 'gotowe' : 'pytanie';
     tylkoDalej('slupek', trybS === 'gotowe');
     $('slupek-karta').classList.remove('dobrze', 'pokaz');
-    $('slupek-podpowiedz').hidden = trybS !== 'pytanie';
+    $('slupek-podpowiedz').disabled = trybS !== 'pytanie';
     $('slupek-ok').textContent = 'Sprawdź';
     $('slupek-info').textContent = '';
     const proc = Math.round(100 * (sl.nr + zad.cur / Math.max(1, zad.zadanie.kroki.length)) / sl.zadan);
@@ -360,7 +353,7 @@
     const wpisana = wpisaneS;
     const ok = !nieWiem && Number(wpisana) === k.odp;
     sl.ostatnie.push({ ok, ms, nieWiem });
-    $('slupek-podpowiedz').hidden = true;
+    $('slupek-podpowiedz').disabled = true;
     if (ok) {
       trybS = 'dobrze';
       $('slupek-karta').classList.add('dobrze');
@@ -460,9 +453,9 @@
   function pinOk(ev) {
     ev.preventDefault();
     const v = $('pin-pole').value.trim();
-    if (!/^[0-9]{4,8}$/.test(v)) { $('pin-blad').textContent = 'PIN to od 4 do 8 cyfr.'; return; }
+    if (!/^[0-9]{4,8}$/.test(v)) { powiedz('pin-blad', 'Wpisz od 4 do 8 cyfr.', true); return; }
     if (pinTryb === 'ustaw') { stan.ustawienia.pin = v; zapisz(); }
-    else if (v !== stan.ustawienia.pin) { $('pin-blad').textContent = 'To nie ten PIN.'; $('pin-pole').value = ''; return; }
+    else if (v !== stan.ustawienia.pin) { powiedz('pin-blad', 'To nie ten PIN. Wpisz go jeszcze raz.', true); $('pin-pole').value = ''; return; }
     pokazRodzicow();
   }
 
@@ -572,7 +565,7 @@
     const tr = $('tabela-naglowek');
     if (tr.children.length) return;
     for (const [id, k] of Object.entries(KOLUMNY)) { const th = document.createElement('th'); th.dataset.id = id; th.scope = 'col'; th.tabIndex = 0; th.textContent = k.tytul; tr.appendChild(th); }
-    kolejnosci.kolumny = P.wlacz(tr, { klucz: 'kolumny-odpowiedzi', poZmianie: wierszeTabeli, ogloszenie: ogloś });
+    kolejnosci.kolumny = P.wlacz(tr, { klucz: 'kolumny-odpowiedzi', poZmianie: () => { wierszeTabeli(); if (kolejnosci.kolumny) panelUstawien(); }, ogloszenie: ogloś });
   }
 
   function wierszeTabeli() {
@@ -611,10 +604,8 @@
     panelModulow();
     const u = stan.ustawienia;
     $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
-    $('nagroda-info').textContent = `W słoiku jest ${ilePkt(stan.sloik.punkty)}.`;
-    $('imie-info').textContent = 'Widać je na powitaniu.';
-    for (const id of ['bonus-info', 'pin-info', 'kolejnosc-info', 'eksport-info']) $(id).textContent = '';
-    historiaSloika();
+    for (const id of ['bonus-info', 'pin-info', 'eksport-info']) powiedz(id, '');
+    panelSloika(); panelUstawien();
     naglowekTabeli();
     pokaz('rodzice');
     const wszystkie = await B.odpowiedzi();
@@ -625,10 +616,26 @@
   function wybierzZakladke(id) {
     for (const b of $('zakladki').children) b.setAttribute('aria-selected', String(b.dataset.id === id));
     for (const p of document.querySelectorAll('.panel')) p.hidden = p.id !== `panel-${id}`;
+    if (id === 'dane') panelUstawien();
+  }
+
+  /** Stan słoika w widoku rodziców. Przycisk, który teraz nic nie zrobi, jest przygaszony, a nie schowany. */
+  function panelSloika() {
+    const h = stan.sloik.historia, ost = h[h.length - 1];
+    $('nagroda-info').textContent = `W słoiku jest ${ilePkt(stan.sloik.punkty)}.`;
+    $('wymien').disabled = stan.sloik.punkty <= 0;
+    $('cofnij-wymiane').disabled = !(ost && ost.powod === 'wymiana');
+    historiaSloika();
+  }
+
+  function panelUstawien() {
+    $('przywroc-kolejnosc').disabled = !Object.values(kolejnosci).some(k => k.zmieniona());
+    $('zmien-pin').disabled = !/^[0-9]{4,8}$/.test($('nowy-pin').value.trim());
+    $('cofnij-wyczyszczenie').disabled = !B.kopia();
   }
 
   // Ustawienia słoika zapisują się od razu po zmianie pola, tak jak moduły (bez przycisku „Zapisz”).
-  function zapiszNagrode(ev, info = 'nagroda-info') {
+  function zapiszNagrode(ev) {
     if (ev) ev.preventDefault();
     const u = stan.ustawienia;
     const liczba = (v, min, max, dom) => { const n = Math.round(Number(v)); return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : dom; };
@@ -639,30 +646,34 @@
     u.celOpis = $('u-opis').value.trim().slice(0, 40) || u.celOpis;
     zapisz();
     // Pola pokazują to, co naprawdę zapisane (na przykład 5 zamiast wpisanych 50 sesji).
+    // Sukces bez komunikatu: zapis działa od razu, a pola pokazują to, co zapisane.
     $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
-    $(info).textContent = 'Zapisane.';
   }
 
-  async function wymien() {
-    const u = stan.ustawienia, p = stan.sloik.punkty;
-    if (p > 0 && p < u.celPunkty && !(await zapytaj({ tytul: 'Wymienić przed celem?', tresc: `W słoiku jest ${p} z ${ilePkt(u.celPunkty)}. Wymiana zabierze ${ilePkt(p)}.`, tak: 'Wymień' }))) return;
-    const ile = Math.min(p, u.celPunkty);
-    if (ile <= 0) { $('nagroda-info').textContent = 'Słoik jest pusty.'; return; }
+  // Wymiana bez pytania. Przed celem wymienia to, co jest; ostatnią wymianę cofa „Cofnij wymianę”.
+  function wymien() {
+    const u = stan.ustawienia, ile = Math.min(stan.sloik.punkty, u.celPunkty);
+    if (ile <= 0) return;
     stan.sloik.punkty -= ile;
     stan.sloik.historia.push({ ts: Date.now(), zmiana: -ile, powod: 'wymiana', opis: `wymiana na: ${u.celOpis}` });
-    zapisz(); historiaSloika();
-    $('nagroda-info').textContent = `Wymienione ${ilePkt(ile)} na: ${u.celOpis}. Zostało ${stan.sloik.punkty}.`;
+    zapisz(); panelSloika();
+  }
+
+  function cofnijWymiane() {
+    const h = stan.sloik.historia, ost = h[h.length - 1];
+    if (!ost || ost.powod !== 'wymiana') return;
+    h.pop(); stan.sloik.punkty -= ost.zmiana;
+    zapisz(); panelSloika();
   }
 
   function dodajBonus() {
     const n = Math.round(Number($('u-bonus').value));
-    if (!Number.isFinite(n) || n < 1 || n > 500) { $('bonus-info').textContent = 'Wpisz od 1 do 500 punktów.'; return; }
+    if (!Number.isFinite(n) || n < 1 || n > 500) { powiedz('bonus-info', 'Wpisz od 1 do 500 punktów.', true); return; }
     const opis = $('u-bonus-opis').value.trim().slice(0, 40);
     stan.sloik.punkty += n;
     stan.sloik.historia.push({ ts: Date.now(), zmiana: n, powod: 'bonus', opis });
-    zapisz(); historiaSloika();
-    $('u-bonus').value = ''; $('u-bonus-opis').value = '';
-    $('bonus-info').textContent = `Dodane ${ilePkt(n)}. W słoiku jest ${stan.sloik.punkty}.`;
+    zapisz(); panelSloika();
+    $('u-bonus').value = ''; $('u-bonus-opis').value = ''; powiedz('bonus-info', '');
   }
 
   async function plikCsv() {
@@ -675,25 +686,33 @@
   const NATYWNA = globalThis.TabliczkaAndroid || globalThis.TabliczkaNatywna || null;
 
   async function pobierz() {
-    if (NATYWNA) { $('eksport-info').textContent = await NATYWNA.zapisz('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi())); return; }
+    if (NATYWNA) { natywnaOdpowiedz(await NATYWNA.zapisz('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi()))); return; }
     const plik = await plikCsv();
     const url = URL.createObjectURL(plik);
     const a = document.createElement('a'); a.href = url; a.download = plik.name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
-    $('eksport-info').textContent = 'Tabela pobrana.';
   }
+
+  // Aplikacja mówi, gdzie zapisała plik (to warto wiedzieć) albo że się nie udało (wtedy na czerwono).
+  function natywnaOdpowiedz(tekst) { powiedz('eksport-info', String(tekst || ''), /^Nie udało/.test(String(tekst))); }
 
   async function udostepnij() {
-    if (NATYWNA) { $('eksport-info').textContent = await NATYWNA.wyslij('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi())); return; }
-    try { await navigator.share({ files: [await plikCsv()], title: 'Tabliczka: odpowiedzi' }); $('eksport-info').textContent = 'Wysłane.'; }
-    catch (e) { if (e && e.name !== 'AbortError') $('eksport-info').textContent = 'Nie udało się wysłać. Użyj „Pobierz tabelę”.'; }
+    if (NATYWNA) { natywnaOdpowiedz(await NATYWNA.wyslij('tabliczka-odpowiedzi.csv', S.csv(await B.odpowiedzi()))); return; }
+    try { await navigator.share({ files: [await plikCsv()], title: 'Tabliczka: odpowiedzi' }); }
+    catch (e) { if (e && e.name !== 'AbortError') powiedz('eksport-info', 'Nie udało się wysłać. Użyj „Pobierz tabelę”.', true); }
   }
 
+  // Kasowanie bez pytania: dane idą najpierw do kopii, a „Cofnij wyczyszczenie” je przywraca.
   async function wyczysc() {
-    if (!(await zapytaj({ tytul: 'Wyczyścić wszystko?', tresc: 'Znikną odpowiedzi, słoik i ustawienia na tym urządzeniu. Tego nie da się cofnąć.', tak: 'Wyczyść', niszczy: true }))) return;
-    await B.wyczysc();
+    if (!(await B.wyczysc())) { powiedz('dane-info', 'Nie udało się zrobić kopii, więc nic nie zostało skasowane.', true); return; }
     stan = B.wczytajStan();
-    odswiezStart(); pokaz('start');
+    await pokazRodzicow(); wybierzZakladke('dane');
+  }
+
+  async function cofnijWyczyszczenie() {
+    if (!(await B.cofnijWyczyszczenie())) { powiedz('dane-info', 'Kopii już nie ma.', true); panelUstawien(); return; }
+    stan = B.wczytajStan();
+    await pokazRodzicow(); wybierzZakladke('dane');
   }
 
   // --- Zdarzenia -----------------------------------------------------------------------------------
@@ -708,13 +727,13 @@
     $('klawiatura-slupek').addEventListener('click', ev => { const b = ev.target.closest('button[data-k]'); if (b) klawiszSlupek(b.dataset.k); });
     $('podpowiedz').addEventListener('click', () => {
       const b = biezaceDzialanie(); if (!b || tryb !== 'pytanie') return;
-      uzytoPodpowiedzi = true; $('sposob').textContent = S.sposob(b.d, b.w.odwroc, b.w.reszta); $('podpowiedz').hidden = true;
+      uzytoPodpowiedzi = true; $('sposob').textContent = S.sposob(b.d, b.w.odwroc, b.w.reszta); $('podpowiedz').disabled = true;
     });
     $('slupek-podpowiedz').addEventListener('click', () => {
       if (!zad || trybS !== 'pytanie') return;
       zad.podpowiedz = true;
       $('slupek-info').textContent = S.pytanieKroku(zad.zadanie.kroki[zad.cur], zad.zadanie.dzielnik).podpowiedz;
-      $('slupek-podpowiedz').hidden = true;
+      $('slupek-podpowiedz').disabled = true;
     });
     $('sesja-koniec').addEventListener('click', zakonczSesje);
     $('slupek-koniec').addEventListener('click', koniecSlupka);
@@ -743,30 +762,35 @@
     $('zakladki').addEventListener('click', ev => { const b = ev.target.closest('[data-id]'); if (b) wybierzZakladke(b.dataset.id); });
     $('nagroda-formularz').addEventListener('submit', zapiszNagrode);
     for (const id of ['u-punkty', 'u-sesji', 'u-cel', 'u-opis']) $(id).addEventListener('change', () => zapiszNagrode());
-    $('u-imie').addEventListener('change', () => zapiszNagrode(null, 'imie-info'));
+    $('u-imie').addEventListener('change', () => zapiszNagrode());
     $('wymien').addEventListener('click', wymien);
+    $('cofnij-wymiane').addEventListener('click', cofnijWymiane);
     $('dodaj-bonus').addEventListener('click', dodajBonus);
     $('pobierz-csv').addEventListener('click', pobierz);
     if ((NATYWNA && NATYWNA.wyslij) || (navigator.canShare && navigator.canShare({ files: [new File(['x'], 'x.csv', { type: 'text/csv' })] }))) {
       $('udostepnij-csv').hidden = false;
       $('udostepnij-csv').addEventListener('click', udostepnij);
     }
+    // „Zmień PIN” jest czynny dopiero przy 4–8 cyfrach. Zmiany PIN-u nie widać, więc ta jedna dostaje krótkie potwierdzenie.
+    $('nowy-pin').addEventListener('input', panelUstawien);
     $('zmien-pin').addEventListener('click', () => {
       const v = $('nowy-pin').value.trim();
-      if (!/^[0-9]{4,8}$/.test(v)) { $('pin-info').textContent = 'Wpisz od 4 do 8 cyfr.'; return; }
-      stan.ustawienia.pin = v; zapisz(); $('nowy-pin').value = ''; $('pin-info').textContent = 'PIN zmieniony.';
+      if (!/^[0-9]{4,8}$/.test(v)) return;
+      stan.ustawienia.pin = v; zapisz(); $('nowy-pin').value = ''; panelUstawien();
+      powiedz('pin-info', 'PIN zmieniony.');
     });
     $('przywroc-kolejnosc').addEventListener('click', () => {
       for (const k of Object.values(kolejnosci)) k.przywroc();
-      $('kolejnosc-info').textContent = 'Kolejność przywrócona.';
+      panelUstawien();
     });
     $('wyczysc').addEventListener('click', wyczysc);
+    $('cofnij-wyczyszczenie').addEventListener('click', cofnijWyczyszczenie);
 
     // Klawiatura komputera: cyfry, Backspace, Enter, Escape.
     document.addEventListener('keydown', ev => {
       const e = document.body.dataset.ekran;
-      // Escape cofa ze Słoika, PIN-u i widoku rodziców (gdy nie ma otwartego pytania). W sesji nie: łatwo o pomyłkę.
-      if (ev.key === 'Escape' && !$('okno').open && (e === 'sloik' || e === 'pin' || e === 'rodzice')) { wstecz(); ev.preventDefault(); return; }
+      // Escape cofa ze Słoika, PIN-u i widoku rodziców. W sesji nie: łatwo o pomyłkę.
+      if (ev.key === 'Escape' && (e === 'sloik' || e === 'pin' || e === 'rodzice')) { wstecz(); ev.preventDefault(); return; }
       if ((e !== 'sesja' && e !== 'slupek') || ev.altKey || ev.ctrlKey || ev.metaKey) return;
       const kl = e === 'slupek' ? klawiszSlupek : klawisz;
       if (/^[0-9]$/.test(ev.key)) { kl(ev.key); ev.preventDefault(); }
@@ -778,7 +802,7 @@
     });
 
     kolejnosci.kafle = P.wlacz($('kafle'), { klucz: 'kafle-start', ogloszenie: ogloś });
-    kolejnosci.zakladki = P.wlacz($('zakladki'), { klucz: 'zakladki-rodzice', ogloszenie: ogloś });
+    kolejnosci.zakladki = P.wlacz($('zakladki'), { klucz: 'zakladki-rodzice', ogloszenie: ogloś, poZmianie: () => { if (kolejnosci.zakladki) panelUstawien(); } });
   }
 
   function start() {

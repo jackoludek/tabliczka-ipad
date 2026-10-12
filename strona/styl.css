@@ -21,8 +21,6 @@
   --skala-1: #ff383c; --skala-3: #ffcc00; --skala-4: #34c759;
   --lider: #a843db; --na-liderze: #ffffff;
   --niszczy: #c9001a;
-  --okno: #ffffff; --pole-okno: #e8e8ed;
-  --cien: 0 1px 2px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .06);
   --promien: 18px;
 }
 @media (prefers-color-scheme: dark) {
@@ -42,8 +40,6 @@
     --pokaz-tlo: #0a1f36;
     --skala-1: #ff4245; --skala-3: #ffd600; --skala-4: #30d158;
     --niszczy: #ff6961;
-    --okno: #1c1c1e; --pole-okno: #2c2c2e;
-    --cien: none;
   }
 }
 
@@ -96,17 +92,10 @@ h2 { font-size: 20px; margin: 28px 0 10px; }
 .wstecz { display: inline-flex; align-items: center; gap: 6px; }
 .ikona-wstecz { width: 11px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Okno pytania: podniesione tło (w ciemnym o stopień jaśniejsze od czerni), przyciski w rzędzie, Anuluj pierwszy. */
-.okno {
-  width: min(420px, calc(100vw - 48px)); padding: 24px; border: 0; border-radius: 20px;
-  background: var(--okno); color: var(--tekst); box-shadow: 0 12px 40px rgba(0, 0, 0, .28);
-}
-.okno::backdrop { background: rgba(0, 0, 0, .45); }
-.okno h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.25; }
-.okno p { margin: 0; }
-.okno-przyciski { display: flex; gap: 8px; margin-top: 24px; }
-.okno-przyciski .przycisk { flex: 1 1 0; padding-inline: 12px; }
-.okno .przycisk-drugi { background: var(--pole-okno); }
+/* Przycisk, który teraz nic nie zrobi, jest przygaszony, a nie schowany: układ się nie przesuwa. */
+.przycisk:disabled, .cichy:disabled { opacity: .4; cursor: default; }
+/* Błąd: jedno zdanie na czerwono przy rzeczy, której dotyczy; znika sam (app.js, powiedz). */
+.blad { color: var(--niszczy); }
 
 /* Start */
 .ekran-start { display: flex; flex-direction: column; gap: 28px; }
@@ -115,7 +104,7 @@ h2 { font-size: 20px; margin: 28px 0 10px; }
 .kafel {
   display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left;
   padding: 20px; border: 1px solid var(--obwodka); border-radius: var(--promien);
-  background: var(--karta); box-shadow: var(--cien); min-height: 88px;
+  background: var(--karta); min-height: 88px;
   touch-action: manipulation; user-select: none; -webkit-user-select: none;
 }
 .kafel-glowny { background: var(--przycisk); color: var(--na-przycisku); border-color: transparent; min-height: 132px; justify-content: flex-end; }
@@ -135,7 +124,7 @@ h2 { font-size: 20px; margin: 28px 0 10px; }
 .postep > span { display: block; height: 100%; width: 0; background: var(--akcent); border-radius: 4px; transition: width .3s ease; }
 .karta-pytania {
   display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-  background: var(--karta); border: 1px solid var(--obwodka); border-radius: 24px; box-shadow: var(--cien);
+  background: var(--karta); border: 1px solid var(--obwodka); border-radius: 24px;
   padding: 16px; min-height: 0; transition: background-color .2s ease;
 }
 .dzialanie { margin: 0; font-size: clamp(52px, 15vw, 84px); font-weight: 700; letter-spacing: -.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }

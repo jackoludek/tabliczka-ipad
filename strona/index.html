@@ -29,7 +29,7 @@
   </header>
   <div class="kafle" id="kafle" aria-label="Menu. Kafelki można przestawiać: przeciągnij albo Alt i strzałka.">
     <button class="kafel kafel-glowny" data-id="cwicz" id="przycisk-cwicz" type="button">
-      <span class="kafel-tytul">Ćwiczymy</span>
+      <span class="kafel-tytul">Ćwicz</span>
       <span class="kafel-opis" id="cwicz-opis"></span>
     </button>
     <button class="kafel" data-id="reszta" id="przycisk-reszta" type="button" hidden>
@@ -107,7 +107,7 @@
 <main id="przerwa" class="ekran ekran-srodek" hidden>
   <div class="tresc-srodek">
     <h1 tabindex="-1">Chwila oddechu</h1>
-    <p class="wstep">Weź trzy spokojne oddechy. Potem zrobimy coś łatwego albo kończymy na dziś. Obie drogi są dobre.</p>
+    <p class="wstep">Weź trzy spokojne oddechy. Potem coś łatwego albo koniec na dziś. Obie drogi są dobre.</p>
     <div class="przyciski">
       <button class="przycisk" id="przerwa-latwe" type="button">Jeszcze 3 łatwe</button>
       <button class="przycisk przycisk-drugi" id="przerwa-koniec" type="button">Koniec na dziś</button>
@@ -226,7 +226,10 @@
         <div><label class="pole-etykieta" for="u-opis">Nagroda</label><input class="pole" id="u-opis" maxlength="40"></div>
       </div>
       <p class="drugi" id="nagroda-info" aria-live="polite"></p>
-      <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button></div>
+      <div class="przyciski przyciski-lewo przyciski-blisko">
+        <button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button>
+        <button class="przycisk przycisk-drugi" type="button" id="cofnij-wymiane">Cofnij wymianę</button>
+      </div>
       <h2>Bonus</h2>
       <p class="drugi">Nie liczy się do dziennego limitu sesji.</p>
       <div class="pola-bonus">
@@ -243,7 +246,7 @@
     <div class="formularz">
       <label class="pole-etykieta" for="u-imie">Imię dziecka</label>
       <input class="pole" id="u-imie" maxlength="20" autocomplete="off">
-      <p class="drugi" id="imie-info" aria-live="polite">Widać je na powitaniu.</p>
+      <p class="drugi">Widać je na powitaniu.</p>
     </div>
     <h2>PIN</h2>
     <div class="formularz">
@@ -255,24 +258,16 @@
     <h2>Kolejność</h2>
     <p class="drugi">Kafelki na starcie, zakładki tutaj i kolumny tabeli.</p>
     <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="przywroc-kolejnosc">Przywróć kolejność</button></div>
-    <p class="drugi" id="kolejnosc-info" aria-live="polite"></p>
     <h2>Od nowa</h2>
-    <p class="drugi">Kasuje wszystkie odpowiedzi, słoik i ustawienia na tym urządzeniu.</p>
-    <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc">Wyczyść wszystko…</button></div>
+    <p class="drugi">Kasuje wszystkie odpowiedzi, słoik i ustawienia na tym urządzeniu. Ostatnie kasowanie da się cofnąć.</p>
+    <div class="przyciski przyciski-lewo przyciski-blisko">
+      <button class="przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc">Wyczyść wszystko</button>
+      <button class="przycisk przycisk-drugi" type="button" id="cofnij-wyczyszczenie">Cofnij wyczyszczenie</button>
+    </div>
+    <p class="drugi" id="dane-info" aria-live="polite"></p>
   </section>
 </main>
 
-<!-- Pytanie przed rzadką, ważną zmianą (zamiast confirm() przeglądarki). Escape zamyka. -->
-<dialog class="okno" id="okno" aria-labelledby="okno-tytul" aria-describedby="okno-tresc">
-  <form method="dialog">
-    <h2 id="okno-tytul"></h2>
-    <p id="okno-tresc"></p>
-    <div class="okno-przyciski">
-      <button class="przycisk przycisk-drugi" value="nie" id="okno-anuluj">Anuluj</button>
-      <button class="przycisk" value="tak" id="okno-tak"></button>
-    </div>
-  </form>
-</dialog>
 
 <script src="silnik.js"></script>
 <script src="baza.js"></script>

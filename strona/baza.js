@@ -1,10 +1,13 @@
-/* Zapis w telefonie: stan (działania, słoik, ustawienia) w localStorage,
- * każda odpowiedź osobno w IndexedDB (dziennik do Excela). Nic nie wychodzi z telefonu. */
+/* Zapis na urządzeniu: stan (działania, słoik, ustawienia) w localStorage,
+ * każda odpowiedź osobno w IndexedDB (dziennik do Excela). Nic nie wychodzi z urządzenia. */
 (function () {
   'use strict';
   const KLUCZ = 'tabliczka:stan';
   const KLUCZ_ZAPAS = 'tabliczka:odpowiedzi'; // gdy przeglądarka nie da IndexedDB
   const NAZWA_DB = 'tabliczka';
+  // Kopia sprzed „Wyczyść wszystko” (jedna, ostatnia): stan w localStorage, odpowiedzi w osobnej bazie.
+  const KLUCZ_KOPII = 'tabliczka:kopia-przed-wyczyszczeniem';
+  const NAZWA_KOPII = 'tabliczka-kopia';
 
   function domyslne() {
     return {
@@ -40,20 +43,34 @@
     try { localStorage.setItem(KLUCZ, JSON.stringify(s)); return true; } catch (e) { return false; }
   }
 
+  function otworz(nazwa) {
+    if (!('indexedDB' in globalThis)) return Promise.reject(new Error('brak IndexedDB'));
+    return new Promise((ok, zle) => {
+      const r = indexedDB.open(nazwa, 1);
+      r.onupgradeneeded = () => { r.result.createObjectStore('odpowiedzi', { autoIncrement: true }); };
+      r.onsuccess = () => ok(r.result);
+      r.onerror = () => zle(r.error);
+      r.onblocked = () => zle(new Error('baza zablokowana'));
+    });
+  }
+
   let polaczenie = null;
   function db() {
-    if (!('indexedDB' in globalThis)) return Promise.reject(new Error('brak IndexedDB'));
-    if (!polaczenie) {
-      polaczenie = new Promise((ok, zle) => {
-        const r = indexedDB.open(NAZWA_DB, 1);
-        r.onupgradeneeded = () => { r.result.createObjectStore('odpowiedzi', { autoIncrement: true }); };
-        r.onsuccess = () => ok(r.result);
-        r.onerror = () => zle(r.error);
-        r.onblocked = () => zle(new Error('baza zablokowana'));
-      }).catch(e => { polaczenie = null; throw e; });
-    }
+    if (!polaczenie) polaczenie = otworz(NAZWA_DB).catch(e => { polaczenie = null; throw e; });
     return polaczenie;
   }
+
+  const wszystkie = d => new Promise((ok, zle) => {
+    const r = d.transaction('odpowiedzi').objectStore('odpowiedzi').getAll();
+    r.onsuccess = () => ok(r.result || []);
+    r.onerror = () => zle(r.error);
+  });
+  /** Zamienia zawartość bazy na podaną listę, w jednej transakcji. */
+  const zastap = (d, lista) => new Promise((ok, zle) => {
+    const t = d.transaction('odpowiedzi', 'readwrite'), s = t.objectStore('odpowiedzi');
+    s.clear(); for (const o of lista) s.add(o);
+    t.oncomplete = () => ok(); t.onerror = () => zle(t.error);
+  });
 
   function zapas() { try { return JSON.parse(localStorage.getItem(KLUCZ_ZAPAS) || '[]'); } catch (e) { return []; } }
 
@@ -74,29 +91,41 @@
 
   async function odpowiedzi() {
     let lista = [];
-    try {
-      const d = await db();
-      lista = await new Promise((ok, zle) => {
-        const r = d.transaction('odpowiedzi').objectStore('odpowiedzi').getAll();
-        r.onsuccess = () => ok(r.result || []);
-        r.onerror = () => zle(r.error);
-      });
-    } catch (e) { /* tylko zapas */ }
+    try { lista = await wszystkie(await db()); } catch (e) { /* tylko zapas */ }
     return lista.concat(zapas()).sort((a, b) => a.ts - b.ts);
   }
 
+  /** „Wyczyść wszystko” da się cofnąć: najpierw kopia, potem kasowanie. Bez kopii nic nie kasuje (false). */
   async function wyczysc() {
+    let wBazie = false, lista = [];
+    try { lista = await wszystkie(await db()); } catch (e) { /* nie ma bazy */ }
+    if (lista.length) {
+      try { const k = await otworz(NAZWA_KOPII); await zastap(k, lista); k.close(); wBazie = true; } catch (e) { return false; }
+    }
+    const kopia = { ts: Date.now(), stan: localStorage.getItem(KLUCZ), zapas: localStorage.getItem(KLUCZ_ZAPAS), wBazie };
+    try { localStorage.setItem(KLUCZ_KOPII, JSON.stringify(kopia)); } catch (e) { return false; }
     localStorage.removeItem(KLUCZ);
     localStorage.removeItem(KLUCZ_ZAPAS);
-    try {
-      const d = await db();
-      await new Promise((ok, zle) => {
-        const t = d.transaction('odpowiedzi', 'readwrite');
-        t.objectStore('odpowiedzi').clear();
-        t.oncomplete = () => ok();
-        t.onerror = () => zle(t.error);
-      });
-    } catch (e) { /* nie było bazy */ }
+    try { await zastap(await db(), []); } catch (e) { /* nie było bazy */ }
+    return true;
+  }
+
+  function kopia() { try { return JSON.parse(localStorage.getItem(KLUCZ_KOPII) || 'null'); } catch (e) { return null; } }
+
+  /** Przywraca stan sprzed wyczyszczenia. Odpowiedzi z kopii wracają, a te dodane od tamtej pory zostają. */
+  async function cofnijWyczyszczenie() {
+    const k = kopia();
+    if (!k) return false;
+    if (k.wBazie) {
+      const kd = await otworz(NAZWA_KOPII), d = await db();
+      const stare = await wszystkie(kd), nowe = await wszystkie(d);
+      await zastap(d, stare.concat(nowe).sort((a, b) => a.ts - b.ts));
+      await zastap(kd, []); kd.close();
+    }
+    if (k.stan) localStorage.setItem(KLUCZ, k.stan); else localStorage.removeItem(KLUCZ);
+    if (k.zapas) localStorage.setItem(KLUCZ_ZAPAS, k.zapas);
+    localStorage.removeItem(KLUCZ_KOPII);
+    return true;
   }
 
   /** Prośba o trwałe miejsce: telefon nie skasuje danych przy braku miejsca. */
@@ -105,5 +134,5 @@
     return false;
   }
 
-  globalThis.Baza = { domyslne, wczytajStan, zapiszStan, dodajOdpowiedz, odpowiedzi, wyczysc, utrwal };
+  globalThis.Baza = { domyslne, wczytajStan, zapiszStan, dodajOdpowiedz, odpowiedzi, wyczysc, kopia, cofnijWyczyszczenie, utrwal };
 })();
