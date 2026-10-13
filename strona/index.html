@@ -55,9 +55,9 @@
 <!-- Sesja -->
 <main id="sesja" class="ekran ekran-sesja" hidden>
   <div class="sesja-gora">
-    <button class="cichy" id="sesja-koniec" type="button">Koniec</button>
+    <button class="cichy" id="sesja-koniec" type="button">Zakończ</button>
     <div class="postep" role="progressbar" aria-label="Postęp sesji" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="postep"><span id="postep-pasek"></span></div>
-    <button class="cichy" id="podpowiedz" type="button">Podpowiedź</button>
+    <button class="cichy" id="podpowiedz" type="button">Pomóż mi</button>
   </div>
   <section class="karta-pytania" id="karta" aria-live="polite">
     <p class="dzialanie" id="dzialanie" tabindex="-1"></p>
@@ -83,9 +83,9 @@
 <!-- Słupek -->
 <main id="slupek" class="ekran ekran-sesja ekran-slupek" hidden>
   <div class="sesja-gora">
-    <button class="cichy" id="slupek-koniec" type="button">Koniec</button>
+    <button class="cichy" id="slupek-koniec" type="button">Zakończ</button>
     <div class="postep" role="progressbar" aria-label="Zadania w tej sesji" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="slupek-postep"><span id="slupek-postep-pasek"></span></div>
-    <button class="cichy" id="slupek-podpowiedz" type="button">Podpowiedź</button>
+    <button class="cichy" id="slupek-podpowiedz" type="button">Pomóż mi</button>
   </div>
   <section class="karta-pytania karta-slupek" id="slupek-karta">
     <div class="slupek-ramka"><table class="slupek-tabela" id="slupek-tabela" aria-hidden="true"></table></div>
@@ -109,8 +109,8 @@
     <h1 tabindex="-1">Chwila oddechu</h1>
     <p class="wstep">Weź trzy spokojne oddechy. Potem coś łatwego albo koniec na dziś. Obie drogi są dobre.</p>
     <div class="przyciski">
-      <button class="przycisk" id="przerwa-latwe" type="button">Jeszcze 3 łatwe</button>
-      <button class="przycisk przycisk-drugi" id="przerwa-koniec" type="button">Koniec na dziś</button>
+      <button class="przycisk" id="przerwa-latwe" type="button">Zrób jeszcze 3 łatwe</button>
+      <button class="przycisk przycisk-drugi" id="przerwa-koniec" type="button">Zakończ na dziś</button>
     </div>
   </div>
 </main>
@@ -136,6 +136,8 @@
     <p class="wstep" id="sloik-cel"></p>
     <div class="sloik-rysunek" aria-hidden="true"><div class="sloik-wypelnienie" id="sloik-wypelnienie"></div></div>
     <p class="drugi" id="sloik-zasady"></p>
+    <p class="nad sloik-ostatnio-tytul" id="sloik-ostatnio-tytul">Ostatnio w słoiku</p>
+    <ul class="historia" id="sloik-ostatnio"></ul>
   </div>
 </main>
 
@@ -177,12 +179,14 @@
   </section>
   <section class="panel" id="panel-reszta" role="tabpanel" hidden>
     <div class="formularz">
-      <label class="pole-etykieta" for="modul-reszta">Dzielenie z resztą na ekranie dziecka</label>
-      <select class="pole" id="modul-reszta">
-        <option value="auto">Samo, gdy dzielenie z tabliczki jest pewne</option>
-        <option value="tak">Włączone</option>
-        <option value="nie">Wyłączone</option>
-      </select>
+      <div class="wiersz-pola">
+        <label class="pole-etykieta etykieta-w-rzedzie" for="modul-reszta"><span class="tylko-czytnik">Dzielenie z resztą: </span>Na ekranie dziecka</label>
+        <select class="pole" id="modul-reszta" aria-describedby="modul-reszta-info">
+          <option value="auto">Samo</option>
+          <option value="tak">Włączone</option>
+          <option value="nie">Wyłączone</option>
+        </select>
+      </div>
       <p class="drugi" id="modul-reszta-info"></p>
     </div>
     <div class="siatka-ramka"><table class="siatka" id="siatka-reszta"></table></div>
@@ -190,15 +194,19 @@
   </section>
   <section class="panel" id="panel-slupek" role="tabpanel" hidden>
     <div class="formularz">
-      <label class="pole-etykieta" for="modul-slupek">Dzielenie w słupku na ekranie dziecka</label>
-      <select class="pole" id="modul-slupek">
-        <option value="auto">Samo, gdy dzielenie z resztą jest pewne</option>
-        <option value="tak">Włączone</option>
-        <option value="nie">Wyłączone</option>
-      </select>
+      <div class="wiersz-pola">
+        <label class="pole-etykieta etykieta-w-rzedzie" for="modul-slupek"><span class="tylko-czytnik">Dzielenie w słupku: </span>Na ekranie dziecka</label>
+        <select class="pole" id="modul-slupek" aria-describedby="modul-slupek-info">
+          <option value="auto">Samo</option>
+          <option value="tak">Włączone</option>
+          <option value="nie">Wyłączone</option>
+        </select>
+      </div>
       <p class="drugi" id="modul-slupek-info"></p>
-      <label class="pole-etykieta" for="u-zadan">Zadań w jednej sesji</label>
-      <input class="pole" id="u-zadan" type="number" min="1" max="6" inputmode="numeric">
+      <div class="wiersz-pola">
+        <label class="pole-etykieta etykieta-w-rzedzie" for="u-zadan">Zadań w jednej sesji</label>
+        <input class="pole pole-liczba" id="u-zadan" type="number" min="1" max="6" inputmode="numeric">
+      </div>
     </div>
     <h2>Poziom</h2>
     <p id="slupek-poziom"></p>
@@ -213,7 +221,7 @@
       <button class="przycisk przycisk-drugi" type="button" id="udostepnij-csv" hidden>Wyślij tabelę</button>
     </div>
     <p class="drugi" id="eksport-info" aria-live="polite"></p>
-    <h2>Ostatnie 60 odpowiedzi</h2>
+    <h2>Ostatnie 30 odpowiedzi</h2>
     <p class="drugi">Kolumny można przestawiać: przeciągnij nagłówek albo Alt i strzałka.</p>
     <div class="tabela-ramka"><table class="tabela" id="tabela-odpowiedzi"><thead><tr id="tabela-naglowek"></tr></thead><tbody id="tabela-cialo"></tbody></table></div>
   </section>
@@ -227,8 +235,8 @@
       </div>
       <p class="drugi" id="nagroda-info" aria-live="polite"></p>
       <div class="przyciski przyciski-lewo przyciski-blisko">
-        <button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień punkty na nagrodę</button>
-        <button class="przycisk przycisk-drugi" type="button" id="cofnij-wymiane">Cofnij wymianę</button>
+        <button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień na nagrodę</button>
+        <button class="przycisk przycisk-drugi" type="button" id="cofnij-wymiane" aria-label="Cofnij wymianę">Cofnij</button>
       </div>
       <h2>Bonus</h2>
       <p class="drugi">Nie liczy się do dziennego limitu sesji.</p>
@@ -239,7 +247,7 @@
       <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="dodaj-bonus">Dodaj do słoika</button></div>
       <p class="drugi" id="bonus-info" aria-live="polite"></p>
     </form>
-    <h2>Historia słoika</h2>
+    <h2>Ostatnio w słoiku</h2>
     <ul class="historia" id="sloik-historia"></ul>
   </section>
   <section class="panel" id="panel-dane" role="tabpanel" hidden>
@@ -247,12 +255,11 @@
       <label class="pole-etykieta" for="u-imie">Imię dziecka</label>
       <input class="pole" id="u-imie" maxlength="20" autocomplete="off">
       <p class="drugi">Widać je na powitaniu.</p>
-    </div>
-    <h2>PIN</h2>
-    <div class="formularz">
       <label class="pole-etykieta" for="nowy-pin">Nowy PIN, od 4 do 8 cyfr</label>
-      <input class="pole pole-pin" id="nowy-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password">
-      <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="zmien-pin">Zmień PIN</button></div>
+      <div class="wiersz-pola">
+        <input class="pole pole-pin" id="nowy-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password">
+        <button class="przycisk przycisk-drugi" type="button" id="zmien-pin">Zmień PIN</button>
+      </div>
       <p class="drugi" id="pin-info" aria-live="polite"></p>
     </div>
     <h2>Kolejność</h2>
@@ -262,7 +269,7 @@
     <p class="drugi">Kasuje wszystkie odpowiedzi, słoik i ustawienia na tym urządzeniu. Ostatnie kasowanie da się cofnąć.</p>
     <div class="przyciski przyciski-lewo przyciski-blisko">
       <button class="przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc">Wyczyść wszystko</button>
-      <button class="przycisk przycisk-drugi" type="button" id="cofnij-wyczyszczenie">Cofnij wyczyszczenie</button>
+      <button class="przycisk przycisk-drugi" type="button" id="cofnij-wyczyszczenie" aria-label="Cofnij wyczyszczenie">Cofnij</button>
     </div>
     <p class="drugi" id="dane-info" aria-live="polite"></p>
   </section>

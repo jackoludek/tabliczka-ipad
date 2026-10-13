@@ -25,6 +25,13 @@
     window.scrollTo(0, 0);
   }
 
+  /** Kiedy, krótko i wszędzie tak samo (tabela odpowiedzi, historia słoika): dziś sama godzina, wcześniej dzień i miesiąc. */
+  function kiedyKrotko(ts) {
+    const d = new Date(ts), g = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+    return d.toDateString() === new Date().toDateString() ? g : `${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')} ${g}`;
+  }
+  const zmianaPkt = x => `${x.zmiana > 0 ? '+' : '−'}${Math.abs(x.zmiana)}`;
+
   function zapisz() {
     if (!B.zapiszStan(stan)) ogloś('Brakuje miejsca na zapis. Zwolnij trochę miejsca w urządzeniu.');
   }
@@ -123,7 +130,7 @@
     $('dzialanie').setAttribute('aria-label', czytaj(t) + (zReszta ? ', ile to jest i ile zostaje?' : ', ile to jest?'));
     $('informacja').textContent = '';
     $('sposob').textContent = '';
-    $('klawisz-ok').textContent = zReszta ? 'Reszta →' : 'Sprawdź';
+    $('klawisz-ok').textContent = zReszta ? 'Wpisz resztę' : 'Sprawdź';
     $('podpowiedz').disabled = false;
     pokazWpisane();
     const proc = Math.round(100 * sesja.i / Math.max(1, sesja.kolejka.length));
@@ -146,7 +153,7 @@
     const r = zReszta() && tryb === 'pytanie';
     $('wpisana').classList.toggle('aktywna-czesc', r && czesc === 'i');
     $('wpisana-reszta').classList.toggle('aktywna-czesc', r && czesc === 'r');
-    if (zReszta() && tryb === 'pytanie') $('klawisz-ok').textContent = czesc === 'i' ? 'Reszta →' : 'Sprawdź';
+    if (zReszta() && tryb === 'pytanie') $('klawisz-ok').textContent = czesc === 'i' ? 'Wpisz resztę' : 'Sprawdź';
   }
 
   function dopisz(v, k) { return v.length < 3 ? (v === '0' ? '' : v) + k : v; }
@@ -388,7 +395,7 @@
     $('slupek-pytanie').textContent = `${z.dzielna} : ${z.dzielnik} = ${wynik}`;
     $('slupek-info').textContent = `Sprawdzenie: ${z.iloraz} × ${z.dzielnik}${z.reszta ? ` + ${z.reszta}` : ''} = ${z.dzielna}. ${zad.pomylki.length ? 'Zrobione!' : 'Bez jednej pomyłki!'}`;
     $('slupek-karta').classList.add('dobrze');
-    $('slupek-ok').textContent = sl.nr + 1 >= sl.zadan ? 'Koniec' : 'Następne zadanie';
+    $('slupek-ok').textContent = 'Dalej'; // stałe słowa procesu: Sprawdź i Dalej, a na ekranie końca Gotowe
     const poziom = stan.slupek.poziom;
     stan.slupek = S.poZadaniuSlupek(stan.slupek, zad.pomylki.length);
     const hist = (stan.slupek.historia || []).concat([{ ts: teraz, tresc: `${z.dzielna} : ${z.dzielnik}`, poziom, pomylki: zad.pomylki }]);
@@ -437,6 +444,13 @@
     $('sloik-cel').textContent = brak > 0 ? `Do nagrody (${bezPrzerwy(u.celOpis)}) brakuje ${ilePkt(brak)}.` : `Uzbierane! Nagroda: ${bezPrzerwy(u.celOpis)}. Powiedz rodzicom.`;
     $('sloik-wypelnienie').style.height = Math.min(100, Math.round(100 * p / Math.max(1, u.celPunkty))) + '%';
     $('sloik-zasady').textContent = `Punkty są za skończone sesje, najwyżej ${u.sesjiDziennie} dziennie. Nie za szybkość i nie za wynik.`;
+    // Trzy ostatnie wpisy: tu dziecko widzi bonus od rodziców („Za co (dziecko to zobaczy)”).
+    const ostatnio = stan.sloik.historia.slice(-3).reverse(), ul = $('sloik-ostatnio'); ul.textContent = '';
+    for (const x of ostatnio) {
+      const za = x.powod === 'sesja' ? 'za sesję' : x.powod === 'bonus' ? (x.opis || 'bonus od rodziców') : bezPrzerwy(x.opis || 'wymiana na nagrodę');
+      const li = document.createElement('li'); li.textContent = `${zmianaPkt(x)} ${za} · ${kiedyKrotko(x.ts)}`; ul.appendChild(li);
+    }
+    $('sloik-ostatnio-tytul').hidden = ul.hidden = !ostatnio.length;
     pokaz('sloik');
   }
 
@@ -463,6 +477,7 @@
 
   // Jedne słowa i jeden kolor na stan działania: podsumowanie, legenda, siatki i dymki mówią to samo.
   // Kolory jak światła: czerwony nie umie, żółty uczy się, zielony pewne; fiolet to mistrz (reguła o tabelach).
+  // Znak mówi to samo bez koloru (zasada 11): kółko puste, w połowie, pełne, gwiazdka (CSS: .znak-…).
   const STANY = {
     niewidziane: { slowo: 'jeszcze nie było', kolor: 'var(--pole)' },
     nowe: { slowo: 'jeszcze nie umie', kolor: 'var(--skala-1)' },
@@ -473,6 +488,20 @@
   const KLASA = r => { const s = S.status(r); return s === 'niewidziane' ? '' : `st-${s}`; };
   /** „mistrz 3, pewne 9, uczy się 20, jeszcze nie było 68”: od najlepszego, zera pominięte. */
   const stanySlowami = l => ['mistrz', 'pewne', 'wolne', 'nowe', 'niewidziane'].filter(k => l[k] > 0).map(k => `${STANY[k].slowo} ${l[k]}`).join(', ');
+  /** Znak stanu rysowany w CSS (kółko puste, w połowie, pełne, gwiazdka): wszędzie wygląda tak samo, niezależnie od kroju. */
+  function znak(st) { const e = document.createElement('span'); e.className = `znak znak-${st}`; e.setAttribute('aria-hidden', 'true'); return e; }
+  /** Czas w kratce bez jednostki (jest w legendzie): poniżej 10 s z jedną cyfrą po przecinku, wyżej w całych sekundach. */
+  const czasKratki = ms => (ms < 9950 ? (ms / 1000).toLocaleString('pl-PL', { maximumFractionDigits: 1, minimumFractionDigits: 1 }) : String(Math.round(ms / 1000)));
+  /** Druga linia kratki: znak stanu i średni czas dobrej odpowiedzi; stan i czas słowami dla czytnika ekranu. */
+  function znakStanu(td, r, sr) {
+    const st = S.status(r);
+    if (st === 'niewidziane') return;
+    const sm = document.createElement('small'), jest = sr !== null && sr !== undefined;
+    sm.appendChild(znak(st));
+    if (jest) { const t = document.createElement('span'); t.setAttribute('aria-hidden', 'true'); t.textContent = `\u00a0${czasKratki(sr)}`; sm.appendChild(t); }
+    const c = document.createElement('span'); c.className = 'tylko-czytnik'; c.textContent = `, ${STANY[st].slowo}${jest ? `, średnio ${czas(sr)}` : ''}`; sm.appendChild(c);
+    td.appendChild(sm);
+  }
   function czas(ms) { return ms === null ? '' : `${(ms / 1000).toLocaleString('pl-PL', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} s`; }
 
   function siatka(tabela, typ) {
@@ -491,32 +520,33 @@
         td.className = KLASA(r);
         const sr = S.sredniCzas(r);
         td.textContent = typ === 'm' ? String(a * b) : `${a * b}:${a}`;
-        if (r && r.proby > 0) { const sm = document.createElement('small'); sm.textContent = sr === null ? 'jeszcze nie' : czas(sr); td.appendChild(sm); }
+        znakStanu(td, r, sr);
         const opis = STANY[S.status(r)].slowo;
         td.title = `${typ === 'm' ? `${a} × ${b}` : `${a * b} : ${a}`}: ${opis}${r && r.proby ? `, prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
       }
     }
   }
 
-  /** Siatka dzielenia z resztą: wiersze to dzielnik, kolumny iloraz, w kratce zakres dzielnych. */
+  /** Siatka dzielenia z resztą: kolumny to dzielnik, wiersze wynik bez reszty. Kratka to cała rodzina, na przykład
+   *  : 5 i = 3 to 16 : 5 … 19 : 5. W kratce tylko kolor i znak stanu, bo 72 kratki muszą zmieścić się na telefonie;
+   *  pełna nazwa jest w dymku i dla czytnika ekranu. */
   function siatkaReszt(tabela) {
-    // Kolumny to dzielnik (8), wiersze iloraz (9): tak siatka mieści się na wąskim telefonie.
     tabela.textContent = '';
     tabela.classList.add('siatka-waska');
     const glowa = tabela.createTHead().insertRow();
-    const rog = document.createElement('th'); rog.scope = 'col'; rog.textContent = '='; glowa.appendChild(rog);
+    const rog = document.createElement('th'); rog.scope = 'col'; glowa.appendChild(rog);
     for (let a = S.MIN; a <= S.MAX; a++) { const th = document.createElement('th'); th.scope = 'col'; th.textContent = `: ${a}`; glowa.appendChild(th); }
     const cialo = tabela.createTBody();
     for (let b = 1; b <= S.MAX; b++) {
       const w = cialo.insertRow();
-      const th = document.createElement('th'); th.scope = 'row'; th.textContent = String(b); w.appendChild(th);
+      const th = document.createElement('th'); th.scope = 'row'; th.textContent = `= ${b}`; w.appendChild(th);
       for (let a = S.MIN; a <= S.MAX; a++) {
-        const id = `r:${a}:${b}`, r = stan.dzialania[id], td = w.insertCell();
+        const id = `r:${a}:${b}`, r = stan.dzialania[id], td = w.insertCell(), st = S.status(r);
         td.className = KLASA(r);
-        td.textContent = a === 2 ? String(a * b + 1) : `${a * b + 1}–${a * b + a - 1}`;
-        const sr = S.sredniCzas(r);
-        if (r && r.proby > 0) { const sm = document.createElement('small'); sm.textContent = sr === null ? 'jeszcze nie' : czas(sr); td.appendChild(sm); }
-        td.title = `${S.nazwa(S.dzialanie(id))}: ${STANY[S.status(r)].slowo}${r && r.proby ? `, prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
+        if (st !== 'niewidziane') td.appendChild(znak(st));
+        const opis = `${S.nazwa(S.dzialanie(id))} · ${STANY[st].slowo}`;
+        const c = document.createElement('span'); c.className = 'tylko-czytnik'; c.textContent = opis; td.appendChild(c);
+        td.title = `${opis}${r && r.proby ? ` · prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
       }
     }
   }
@@ -533,7 +563,7 @@
     $('u-zadan').value = u.zadanSlupka;
     $('slupek-poziom').textContent = `Poziom ${stan.slupek.poziom} z ${S.NAJWYZSZY_POZIOM}: ${S.POZIOMY_SLUPKA[stan.slupek.poziom]}. Zrobionych zadań: ${stan.slupek.zadan || 0}.`;
     const ul = $('slupek-pomylki'); ul.textContent = '';
-    const h = (stan.slupek.historia || []).slice(-10).reverse();
+    const h = (stan.slupek.historia || []).slice(-5).reverse(); // pięć ostatnich: wszystkie są w tabeli dla Excela
     if (!h.length) { const li = document.createElement('li'); li.textContent = 'Jeszcze nie było zadań.'; ul.appendChild(li); }
     for (const x of h) {
       const li = document.createElement('li');
@@ -542,20 +572,21 @@
     }
   }
 
-  function legenda(el) {
+  // Legenda: kratka w kolorze stanu ze znakiem w środku, taka sama jak w siatce, i słowo.
+  function legenda(el, podpis) {
     el.textContent = '';
-    for (const { kolor: k, slowo: t } of Object.values(STANY)) {
-      const s = document.createElement('span'); s.style.setProperty('--k', k); s.textContent = t; el.appendChild(s);
+    for (const [st, { slowo, kolor }] of Object.entries(STANY)) {
+      const s = document.createElement('span'), k = document.createElement('span');
+      k.className = st === 'mistrz' ? 'kratka kratka-jasna' : 'kratka';
+      k.style.setProperty('--k', st === 'niewidziane' || st === 'mistrz' ? kolor : `color-mix(in srgb, ${kolor} 42%, var(--karta))`);
+      if (st !== 'niewidziane') k.appendChild(znak(st));
+      s.append(k, slowo); el.appendChild(s);
     }
-    const sm = document.createElement('span'); sm.className = 'bez-koloru'; sm.textContent = 'Mała liczba: średni czas dobrej odpowiedzi.'; el.appendChild(sm);
+    if (podpis) { const sm = document.createElement('span'); sm.className = 'bez-koloru'; sm.textContent = podpis; el.appendChild(sm); }
   }
 
   const KOLUMNY = {
-    // Dziś sama godzina, wcześniej dzień i miesiąc: tabela mieści się wtedy na telefonie bez przewijania w bok.
-    kiedy: { tytul: 'Kiedy', wartosc: o => {
-      const d = new Date(o.ts), g = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-      return d.toDateString() === new Date().toDateString() ? g : `${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')} ${g}`;
-    } },
+    kiedy: { tytul: 'Kiedy', wartosc: o => kiedyKrotko(o.ts) },
     dzialanie: { tytul: 'Działanie', wartosc: o => o.tresc },
     odpowiedz: { tytul: 'Odpowiedź', wartosc: o => (o.nieWiem ? 'nie wiem' : o.odpowiedz) },
     wynik: { tytul: 'Wynik', wartosc: o => (o.ok ? 'dobrze' : `inna, ${o.poprawna}`) },
@@ -581,13 +612,12 @@
 
   function historiaSloika() {
     const ul = $('sloik-historia'); ul.textContent = '';
-    const h = stan.sloik.historia.slice(-15).reverse();
+    const h = stan.sloik.historia.slice(-5).reverse(); // pięć ostatnich, tak samo nazwane jak „Ostatnio w słoiku” u dziecka
     if (!h.length) { const li = document.createElement('li'); li.textContent = 'Jeszcze pusto.'; ul.appendChild(li); }
     for (const x of h) {
       const li = document.createElement('li');
-      const kiedy = new Date(x.ts).toLocaleString('pl-PL', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
       const za = x.powod === 'sesja' ? 'za sesję' : x.powod === 'bonus' ? `bonus${x.opis ? `: ${x.opis}` : ''}` : x.opis || 'wymiana na nagrodę';
-      li.textContent = `${kiedy}: ${x.zmiana > 0 ? '+' : ''}${x.zmiana} ${za}`;
+      li.textContent = `${kiedyKrotko(x.ts)} · ${zmianaPkt(x)} ${za}`;
       ul.appendChild(li);
     }
   }
@@ -602,7 +632,9 @@
       ? `Ostatnia sesja ${new Date(ost.koniec).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })}, razem ${stan.sesje.length}.`
       : 'Jeszcze nie było sesji.';
     siatka($('siatka-mnozenie'), 'm'); siatka($('siatka-dzielenie'), 'd'); siatkaReszt($('siatka-reszta'));
-    legenda($('legenda-mnozenie')); legenda($('legenda-dzielenie')); legenda($('legenda-reszta'));
+    const podCzasem = 'Pod wynikiem: znak stanu i średni czas dobrej odpowiedzi w sekundach.';
+    legenda($('legenda-mnozenie'), podCzasem); legenda($('legenda-dzielenie'), podCzasem);
+    legenda($('legenda-reszta'), 'Kratka : 5 i = 3 to od 16 : 5 do 19 : 5.');
     panelModulow();
     const u = stan.ustawienia;
     $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
@@ -611,7 +643,7 @@
     naglowekTabeli();
     pokaz('rodzice');
     const wszystkie = await B.odpowiedzi();
-    ostatnieOdpowiedzi = wszystkie.slice(-60).reverse();
+    ostatnieOdpowiedzi = wszystkie.slice(-30).reverse(); // mniej więcej jeden dzień; wszystkie są w tabeli dla Excela
     wierszeTabeli();
   }
 
