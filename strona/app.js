@@ -632,7 +632,7 @@
       ? `Ostatnia sesja ${new Date(ost.koniec).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })}, razem ${stan.sesje.length}.`
       : 'Jeszcze nie było sesji.';
     siatka($('siatka-mnozenie'), 'm'); siatka($('siatka-dzielenie'), 'd'); siatkaReszt($('siatka-reszta'));
-    const podCzasem = 'Pod wynikiem: znak stanu i średni czas dobrej odpowiedzi w sekundach.';
+    const podCzasem = 'Liczba pod wynikiem: średni czas w sekundach.'; // znak stanu tłumaczą kratki legendy
     legenda($('legenda-mnozenie'), podCzasem); legenda($('legenda-dzielenie'), podCzasem);
     legenda($('legenda-reszta'), 'Kratka : 5 i = 3 to od 16 : 5 do 19 : 5.');
     panelModulow();
