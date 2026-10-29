@@ -106,6 +106,35 @@
     if (maly === duzy) return `${maly} × ${maly - 1} i dodaj jeszcze ${maly}`;
     return `${duzy} × 5 = ${duzy * 5}, potem dodaj ${maly - 5} × ${duzy}`;
   }
+  /** Kropki do sposobu: prostokąt rzędów jak w fińskich i szwedzkich podręcznikach (najpierw zrozumieć, potem zapamiętać).
+   * wiersze to grupy rzędów (z odstępem między grupami), kolumny to kropki w rzędzie,
+   * blade to puste kółka z prawej: ostatnia kolumna do odjęcia przy × 9, druga połowa dziesiątki przy × 5.
+   * Grupy idą za tym, co mówi sposob(). Przy reszcie bez kropek. */
+  function model(d, odwroc) {
+    if (d.typ === 'r') return null;
+    if (d.typ === 'd') return { wiersze: [d.a], kolumny: d.b, blade: 0 };
+    const [x, y] = odwroc ? [d.b, d.a] : [d.a, d.b];
+    const maly = Math.min(x, y), duzy = Math.max(x, y);
+    if (maly === 2) return { wiersze: [1, 1], kolumny: duzy, blade: 0 };
+    if (maly === 5 || duzy === 5) return { wiersze: [maly === 5 ? duzy : maly], kolumny: 10, blade: 5 };
+    if (duzy === 9) return { wiersze: [maly], kolumny: 10, blade: 1 };
+    if (maly === 4 || duzy === 4) return { wiersze: [2, 2], kolumny: maly === 4 ? duzy : maly, blade: 0 };
+    if (maly === 8 || duzy === 8) return { wiersze: [4, 4], kolumny: maly === 8 ? duzy : maly, blade: 0 };
+    if (maly === 3) return { wiersze: [1, 1, 1], kolumny: duzy, blade: 0 };
+    if (maly === duzy) return { wiersze: [maly - 1, 1], kolumny: maly, blade: 0 };
+    return { wiersze: [5, maly - 5], kolumny: duzy, blade: 0 };
+  }
+  /** Pomylone w tej sesji, najwyżej 3, do napisania raz ręką na kartce (szwedzki powrót do papieru).
+   * Bez reszty, bo tam wynik zależy od dzielnej. */
+  function doKartki(s, ile = 3) {
+    const ids = [];
+    for (const o of s.odpowiedzi) {
+      if (o.ok || ids.includes(o.id) || !/^[md]:/.test(String(o.id))) continue;
+      ids.push(o.id);
+      if (ids.length >= ile) break;
+    }
+    return ids.map(id => { const d = dzialanie(id); return `${tresc(d)} = ${wynik(d)}`; });
+  }
 
   // --- Czas ------------------------------------------------------------------------------
 
@@ -620,7 +649,7 @@
 
   const Silnik = {
     MIN, MAX, ODSTEPY_DNI, NAJWYZSZE, USTAWIENIA,
-    wszystkie, reszty, pula, zPuli, dzialanie, wynik, tresc, nazwa, trudnosc, sposob,
+    wszystkie, reszty, pula, zPuli, dzialanie, wynik, tresc, nazwa, trudnosc, sposob, model, doKartki,
     kluczDnia, poczatekDnia, dodajDni,
     nowyRekord, status, sredniCzas, zapiszWynik,
     dobierz, nowaSesja, biezace, odpowiedz, dolozLatwe, podsumowanie,

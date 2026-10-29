@@ -149,6 +149,13 @@ h2 { font-size: var(--t-tresc); font-weight: 600; margin: 24px 0 8px; }
 .karta-pytania.dobrze .informacja { color: var(--dobrze); }
 .karta-pytania.pokaz { background: var(--pokaz-tlo); }
 .karta-pytania.pokaz .wpisana { color: var(--akcent); border-color: var(--akcent); }
+/* Kropki do sposobu: jeden kolor, grupy rozdziela odstęp, puste kółka z prawej to „odejmij” albo „połowa z dziesięciu”.
+ * Kurczą się, gdy w karcie brakuje miejsca (min-height: 0), więc ekran sesji się nie przewija. */
+.model { flex: 0 1 auto; min-height: 0; width: 100%; margin-top: 12px; }
+.model[hidden] { display: none; }
+.model svg { display: block; width: 100%; height: 100%; }
+.model .k { fill: var(--akcent); }
+.model .b { fill: none; stroke: var(--drugi); stroke-width: 1.5; }
 
 /* Dzielenie z resztą: dwie części odpowiedzi */
 .odpowiedz-wiersz { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin-top: 12px; }
@@ -212,6 +219,11 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 .tresc-srodek { width: 100%; margin-block: auto; }
 .zdania p { font-size: var(--t-tresc); margin: 12px 0 0; }
 .punkty { font-size: var(--t-tresc); font-weight: 600; color: var(--dobrze); margin: 20px 0 0; }
+/* Na kartce: pomylone działania do napisania ręką. Blok z ramką. */
+.kartka { margin: 20px 0 0; padding: 16px 20px; background: var(--karta); border: 1px solid var(--obwodka); border-radius: var(--promien); }
+.kartka[hidden] { display: none; }
+.kartka h2 { margin: 0; font-size: var(--t-tresc); font-weight: 600; }
+.kartka-lista { margin: 8px 0 0; padding: 0; list-style: none; font-size: clamp(28px, 8vw, 36px); font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
 .sloik-rysunek {
   width: 140px; height: 180px; margin: 24px 0 8px; border: 4px solid var(--obwodka); border-top-width: 10px;
   border-radius: 18px 18px 34px 34px; position: relative; overflow: hidden; background: var(--karta);

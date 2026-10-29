@@ -167,6 +167,7 @@
     $('dzialanie').setAttribute('aria-label', czytaj(t) + (zReszta ? ', ile to jest i ile zostaje?' : ', ile to jest?'));
     $('informacja').textContent = '';
     $('sposob').textContent = '';
+    pokazModel(null);
     napis('klawisz-ok', zReszta ? 'Wpisz resztę' : 'Sprawdź');
     $('podpowiedz').disabled = false;
     pokazWpisane();
@@ -182,6 +183,34 @@
     }));
   }
 
+  // Kropki do sposobu (S.model): grupy rzędów z odstępem, puste kółka z prawej. Liczby tylko z silnika, więc innerHTML jest bezpieczne.
+  const odmiana = (n, jeden, kilka, wiele) => n === 1 ? jeden : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? kilka : wiele;
+  function pokazModel(m) {
+    const el = $('model');
+    if (!m) { el.hidden = true; el.textContent = ''; el.style.flexBasis = ''; return; }
+    // Kropka ma zawsze tę samą wielkość (SKALA px na jednostkę), więc 2 × 5 to mały prostokąt, a 7 × 9 duży.
+    // Wysokość idzie do flex-basis: gdy w karcie brakuje miejsca, rysunek maleje w całości.
+    const K = 12, R = 4.5, ODSTEP = 8, SKALA = 1.5; // kratka 18 px, kropka 13,5 px, odstęp grup 12 px
+    const rzedy = m.wiersze.reduce((x, y) => x + y, 0);
+    const w = m.kolumny * K, h = rzedy * K + (m.wiersze.length - 1) * ODSTEP;
+    let kropki = '', y0 = 0;
+    for (const g of m.wiersze) {
+      for (let r = 0; r < g; r++) for (let c = 0; c < m.kolumny; c++) {
+        const blada = c >= m.kolumny - m.blade;
+        kropki += `<circle class="${blada ? 'b' : 'k'}" cx="${c * K + K / 2}" cy="${y0 + r * K + K / 2}" r="${blada ? R - 0.75 : R}"/>`;
+      }
+      y0 += g * K + ODSTEP;
+    }
+    let opis = `${rzedy} ${odmiana(rzedy, 'rząd', 'rzędy', 'rzędów')} po ${m.kolumny} ${odmiana(m.kolumny, 'kropka', 'kropki', 'kropek')}`;
+    if (m.wiersze.length > 1) opis += `, w grupach ${m.wiersze.join(' i ')}`;
+    if (m.blade) opis += m.blade === 1 ? ', ostatnia kolumna pusta' : `, ${m.blade} ostatnich kolumn pustych`;
+    el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${opis}">${kropki}</svg>`;
+    el.style.flexBasis = `${h * SKALA}px`;
+    el.hidden = false;
+    // Na bardzo niskim ekranie rysunek wyszedłby mniejszy niż połowa: wtedy go nie ma, zostaje sposób słowami.
+    const svg = el.firstChild;
+    requestAnimationFrame(() => { if (el.firstChild === svg && el.getBoundingClientRect().height < h * SKALA * 0.5) el.hidden = true; });
+  }
   function zReszta() { const b = sesja && biezaceDzialanie(); return !!(b && b.d.typ === 'r'); }
 
   function pokazWpisane() {
@@ -254,6 +283,7 @@
       $('sposob').textContent = r
         ? `${b.d.a} × ${poprawna} = ${b.d.a * poprawna}, a do ${b.d.a * poprawna + poprawnaR} zostaje ${poprawnaR}.`
         : S.sposob(b.d, b.w.odwroc);
+      pokazModel(r ? null : S.model(b.d, b.w.odwroc));
       napis('klawisz-ok', 'Dalej');
       tylkoDalej('sesja', true);
       sesja._poOdpowiedzi = w;
@@ -288,6 +318,10 @@
     $('koniec-tytul').textContent = pod.dobrze > 0 ? 'Brawo!' : 'Koniec na dziś';
     const z = $('koniec-zdania'); z.textContent = '';
     for (const t of pod.zdania) { const p = document.createElement('p'); p.textContent = t; z.appendChild(p); }
+    const kartka = S.doKartki(s), lista = $('koniec-kartka-lista');
+    lista.textContent = '';
+    for (const t of kartka) { const li = document.createElement('li'); li.textContent = t; lista.appendChild(li); }
+    $('koniec-kartka').hidden = !kartka.length;
     $('koniec-punkty').textContent = pkt.punkty > 0
       ? `+${ilePkt(pkt.punkty)} do słoika. Masz już ${stan.sloik.punkty}.`
       : pkt.powod === 'limit' ? 'Punkty na dziś już są w słoiku. To ćwiczenie i tak się liczy.'
@@ -830,6 +864,8 @@
     $('podpowiedz').addEventListener('click', () => {
       const b = biezaceDzialanie(); if (!b || tryb !== 'pytanie') return;
       uzytoPodpowiedzi = true; $('sposob').textContent = S.sposob(b.d, b.w.odwroc, b.w.reszta); $('podpowiedz').disabled = true;
+      // Przy dzieleniu kropki zdradzałyby wynik (liczba kolumn), więc tylko przy mnożeniu.
+      pokazModel(b.d.typ === 'm' ? S.model(b.d, b.w.odwroc) : null);
     });
     $('slupek-podpowiedz').addEventListener('click', () => {
       if (!zad || trybS !== 'pytanie') return;
@@ -951,7 +987,7 @@
 
   globalThis.Aplikacja = {
     wstecz,
-    stan: () => stan, sesja: () => sesja, tryb: () => tryb,
+    stan: () => stan, sesja: () => sesja, tryb: () => tryb, pokazModel,
     slupek: () => (zad ? { kroki: zad.zadanie.kroki, cur: zad.cur, dzielna: zad.zadanie.dzielna, dzielnik: zad.zadanie.dzielnik, iloraz: zad.zadanie.iloraz, reszta: zad.zadanie.reszta } : null),
     trybSlupka: () => trybS,
   };
