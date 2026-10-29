@@ -45,6 +45,43 @@
     if (tekst) czasyKomunikatow[id] = setTimeout(() => { if (el.textContent === tekst) { el.textContent = ''; el.classList.remove('blad'); } }, 6000);
   }
 
+  /** Napis przycisku Wzornika stoi w <span class="t">, bo tylko tam jest na środku wersalików. */
+  function napis(id, tekst) { const b = $(id), t = b.querySelector('.t'); (t || b).textContent = tekst; }
+
+  // Cofnij i ponów (Ctrl+Z, Ctrl+Y, reguła Jacka z 16.10.2026): każda zmiana rodzica i każde przestawienie to krok.
+  // Krok z innego stanu (po „Wyczyść wszystko” albo jego cofnięciu) odpada sam, a Ctrl+Z bierze następny.
+  const historia = { wstecz: [], naprzod: [] };
+  function krok(opis, cofnij, ponow, zawsze = false) {
+    historia.wstecz.push({ opis, cofnij, ponow, s: stan, zawsze });
+    if (historia.wstecz.length > 50) historia.wstecz.shift();
+    historia.naprzod = [];
+  }
+  async function przejdz(skad, dokad, co, slowo) {
+    while (skad.length) {
+      const k = skad.pop();
+      if (!k.zawsze && k.s !== stan) continue;
+      if (await k[co]()) { k.s = stan; dokad.push(k); odswiezPoKroku(); ogloś(`${slowo}: ${k.opis}.`); return true; }
+    }
+    return false;
+  }
+  const cofnijKrok = () => przejdz(historia.wstecz, historia.naprzod, 'cofnij', 'Cofnięte');
+  const ponowKrok = () => przejdz(historia.naprzod, historia.wstecz, 'ponow', 'Ponowione');
+  /** Na telefonie nie ma Ctrl+Z, więc po zmianie bez własnego przycisku „Cofnij” przez 6 s stoi „Cofnij” Wzornika. */
+  function cofnijNaChwile() { if (globalThis.JezykWygladu && JezykWygladu.cofnij) JezykWygladu.cofnij(() => { cofnijKrok(); }); }
+  function odswiezPoKroku() {
+    const e = document.body.dataset.ekran;
+    if (e === 'rodzice') { panelSloika(); panelModulow(); polaUstawien(); panelUstawien(); }
+    else if (e === 'start') odswiezStart();
+  }
+  /** Krok cofania dla przestawienia: kolejność przed i po, z powrotem ułożona przez Przestawiane. */
+  function przestawienie(nazwa) {
+    return (przed, po) => {
+      const uloz = l => () => { kolejnosci[nazwa].ustaw(l); panelUstawien(); return true; };
+      krok('przestawienie', uloz(przed), uloz(po));
+      cofnijNaChwile();
+    };
+  }
+
   /** Po pomyłce liczy się tylko „Dalej”: cyfry są przygaszone i nieczynne, żeby było widać, co teraz. */
   function tylkoDalej(ekran, tak) {
     const e = $(ekran);
@@ -130,7 +167,7 @@
     $('dzialanie').setAttribute('aria-label', czytaj(t) + (zReszta ? ', ile to jest i ile zostaje?' : ', ile to jest?'));
     $('informacja').textContent = '';
     $('sposob').textContent = '';
-    $('klawisz-ok').textContent = zReszta ? 'Wpisz resztę' : 'Sprawdź';
+    napis('klawisz-ok', zReszta ? 'Wpisz resztę' : 'Sprawdź');
     $('podpowiedz').disabled = false;
     pokazWpisane();
     const proc = Math.round(100 * sesja.i / Math.max(1, sesja.kolejka.length));
@@ -153,7 +190,7 @@
     const r = zReszta() && tryb === 'pytanie';
     $('wpisana').classList.toggle('aktywna-czesc', r && czesc === 'i');
     $('wpisana-reszta').classList.toggle('aktywna-czesc', r && czesc === 'r');
-    if (zReszta() && tryb === 'pytanie') $('klawisz-ok').textContent = czesc === 'i' ? 'Wpisz resztę' : 'Sprawdź';
+    if (zReszta() && tryb === 'pytanie') napis('klawisz-ok', czesc === 'i' ? 'Wpisz resztę' : 'Sprawdź');
   }
 
   function dopisz(v, k) { return v.length < 3 ? (v === '0' ? '' : v) + k : v; }
@@ -217,7 +254,7 @@
       $('sposob').textContent = r
         ? `${b.d.a} × ${poprawna} = ${b.d.a * poprawna}, a do ${b.d.a * poprawna + poprawnaR} zostaje ${poprawnaR}.`
         : S.sposob(b.d, b.w.odwroc);
-      $('klawisz-ok').textContent = 'Dalej';
+      napis('klawisz-ok', 'Dalej');
       tylkoDalej('sesja', true);
       sesja._poOdpowiedzi = w;
       ogloś(`${czytaj(tresc)} to ${poprawna}${r ? `, reszty ${poprawnaR}` : ''}.`);
@@ -284,7 +321,7 @@
     tylkoDalej('slupek', trybS === 'gotowe');
     $('slupek-karta').classList.remove('dobrze', 'pokaz');
     $('slupek-podpowiedz').disabled = trybS !== 'pytanie';
-    $('slupek-ok').textContent = 'Sprawdź';
+    napis('slupek-ok', 'Sprawdź');
     $('slupek-info').textContent = '';
     const proc = Math.round(100 * (sl.nr + zad.cur / Math.max(1, zad.zadanie.kroki.length)) / sl.zadan);
     $('slupek-postep-pasek').style.width = proc + '%';
@@ -377,7 +414,7 @@
     rysujSlupek();
     wpisaneS = String(k.odp); pokazPytanieS();
     $('slupek-info').textContent = (nieWiem ? 'Nic się nie stało. ' : '') + S.wyjasnienieKroku(k, d, nieWiem ? '' : wpisana);
-    $('slupek-ok').textContent = 'Dalej';
+    napis('slupek-ok', 'Dalej');
     tylkoDalej('slupek', true);
     // Dwie szybkie pomyłki pod rząd: chwila oddechu (nie częściej niż co 3 kroki).
     const dwie = sl.ostatnie.slice(-2);
@@ -395,7 +432,7 @@
     $('slupek-pytanie').textContent = `${z.dzielna} : ${z.dzielnik} = ${wynik}`;
     $('slupek-info').textContent = `Sprawdzenie: ${z.iloraz} × ${z.dzielnik}${z.reszta ? ` + ${z.reszta}` : ''} = ${z.dzielna}. ${zad.pomylki.length ? 'Zrobione!' : 'Bez jednej pomyłki!'}`;
     $('slupek-karta').classList.add('dobrze');
-    $('slupek-ok').textContent = 'Dalej'; // stałe słowa procesu: Sprawdź i Dalej, a na ekranie końca Gotowe
+    napis('slupek-ok', 'Dalej'); // stałe słowa procesu: Sprawdź i Dalej, a na ekranie końca Gotowe
     const poziom = stan.slupek.poziom;
     stan.slupek = S.poZadaniuSlupek(stan.slupek, zad.pomylki.length);
     const hist = (stan.slupek.historia || []).concat([{ ts: teraz, tresc: `${z.dzielna} : ${z.dzielnik}`, poziom, pomylki: zad.pomylki }]);
@@ -522,7 +559,8 @@
         td.textContent = typ === 'm' ? String(a * b) : `${a * b}:${a}`;
         znakStanu(td, r, sr);
         const opis = STANY[S.status(r)].slowo;
-        td.title = `${typ === 'm' ? `${a} × ${b}` : `${a * b} : ${a}`}: ${opis}${r && r.proby ? `, prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
+        // Dymek Wzornika (data-dymek, jezyk.js) zamiast natywnego title: na środku pod kratką, z klawiatury i dla czytnika ekranu.
+        td.dataset.dymek = `${typ === 'm' ? `${a} × ${b}` : `${a * b} : ${a}`}: ${opis}${r && r.proby ? `, prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
       }
     }
   }
@@ -546,7 +584,7 @@
         if (st !== 'niewidziane') td.appendChild(znak(st));
         const opis = `${S.nazwa(S.dzialanie(id))} · ${STANY[st].slowo}`;
         const c = document.createElement('span'); c.className = 'tylko-czytnik'; c.textContent = opis; td.appendChild(c);
-        td.title = `${opis}${r && r.proby ? ` · prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
+        td.dataset.dymek = `${opis}${r && r.proby ? ` · prób ${r.proby}, dobrze ${r.dobrze}` : ''}`;
       }
     }
   }
@@ -598,7 +636,7 @@
     const tr = $('tabela-naglowek');
     if (tr.children.length) return;
     for (const [id, k] of Object.entries(KOLUMNY)) { const th = document.createElement('th'); th.dataset.id = id; th.scope = 'col'; th.tabIndex = 0; th.textContent = k.tytul; tr.appendChild(th); }
-    kolejnosci.kolumny = P.wlacz(tr, { klucz: 'kolumny-odpowiedzi', poZmianie: () => { wierszeTabeli(); if (kolejnosci.kolumny) panelUstawien(); }, ogloszenie: ogloś });
+    kolejnosci.kolumny = P.wlacz(tr, { klucz: 'kolumny-odpowiedzi', poZmianie: () => { wierszeTabeli(); if (kolejnosci.kolumny) panelUstawien(); }, poPrzestawieniu: przestawienie('kolumny'), ogloszenie: ogloś });
   }
 
   function wierszeTabeli() {
@@ -636,8 +674,7 @@
     legenda($('legenda-mnozenie'), podCzasem); legenda($('legenda-dzielenie'), podCzasem);
     legenda($('legenda-reszta'), 'Kratka : 5 i = 3 to od 16 : 5 do 19 : 5.');
     panelModulow();
-    const u = stan.ustawienia;
-    $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
+    polaUstawien();
     for (const id of ['bonus-info', 'pin-info', 'eksport-info']) powiedz(id, '');
     panelSloika(); panelUstawien();
     naglowekTabeli();
@@ -668,10 +705,24 @@
     $('cofnij-wyczyszczenie').disabled = !B.kopia();
   }
 
+  /** Pola ustawień pokazują to, co naprawdę zapisane. */
+  function polaUstawien() {
+    const u = stan.ustawienia;
+    $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
+  }
+  const POLA_NAGRODY = ['imie', 'punktyZaSesje', 'sesjiDziennie', 'celPunkty', 'celOpis'];
+  const wybierz = (o, klucze) => Object.fromEntries(klucze.map(k => [k, o[k]]));
+  /** Krok cofania dla zmiany ustawień: wartości przed i po. */
+  function zmianaUstawien(opis, przed, po) {
+    if (JSON.stringify(przed) === JSON.stringify(po)) return;
+    const ustaw = o => () => { Object.assign(stan.ustawienia, JSON.parse(JSON.stringify(o))); zapisz(); return true; };
+    krok(opis, ustaw(przed), ustaw(po));
+  }
+
   // Ustawienia słoika zapisują się od razu po zmianie pola, tak jak moduły (bez przycisku „Zapisz”).
   function zapiszNagrode(ev) {
     if (ev) ev.preventDefault();
-    const u = stan.ustawienia;
+    const u = stan.ustawienia, przed = wybierz(u, POLA_NAGRODY);
     const liczba = (v, min, max, dom) => { const n = Math.round(Number(v)); return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : dom; };
     u.imie = $('u-imie').value.trim().slice(0, 20);
     u.punktyZaSesje = liczba($('u-punkty').value, 1, 100, u.punktyZaSesje);
@@ -681,16 +732,30 @@
     zapisz();
     // Pola pokazują to, co naprawdę zapisane (na przykład 5 zamiast wpisanych 50 sesji).
     // Sukces bez komunikatu: zapis działa od razu, a pola pokazują to, co zapisane.
-    $('u-imie').value = u.imie; $('u-punkty').value = u.punktyZaSesje; $('u-sesji').value = u.sesjiDziennie; $('u-cel').value = u.celPunkty; $('u-opis').value = u.celOpis;
+    polaUstawien();
+    zmianaUstawien(u.imie !== przed.imie ? 'zmiana imienia' : 'zmiana ustawień słoika', przed, wybierz(u, POLA_NAGRODY));
   }
 
-  // Wymiana bez pytania. Przed celem wymienia to, co jest; ostatnią wymianę cofa „Cofnij wymianę”.
+  /** Wpis w słoiku (wymiana albo bonus) z punktami; zwraca false, gdy nie ma czego zmienić. */
+  function dodajWpis(w) {
+    if (stan.sloik.historia.includes(w)) return false;
+    stan.sloik.historia.push(w); stan.sloik.punkty += w.zmiana;
+    zapisz(); panelSloika(); return true;
+  }
+  function usunWpis(w) {
+    const h = stan.sloik.historia, i = h.lastIndexOf(w);
+    if (i < 0 || stan.sloik.punkty - w.zmiana < 0) return false;
+    h.splice(i, 1); stan.sloik.punkty -= w.zmiana;
+    zapisz(); panelSloika(); return true;
+  }
+
+  // Wymiana bez pytania. Przed celem wymienia to, co jest; ostatnią wymianę cofa „Cofnij wymianę” albo Ctrl+Z.
   function wymien() {
     const u = stan.ustawienia, ile = Math.min(stan.sloik.punkty, u.celPunkty);
     if (ile <= 0) return;
-    stan.sloik.punkty -= ile;
-    stan.sloik.historia.push({ ts: Date.now(), zmiana: -ile, powod: 'wymiana', opis: `wymiana na: ${u.celOpis}` });
-    zapisz(); panelSloika();
+    const wpis = { ts: Date.now(), zmiana: -ile, powod: 'wymiana', opis: `wymiana na: ${u.celOpis}` };
+    dodajWpis(wpis);
+    krok('wymiana na nagrodę', () => usunWpis(wpis), () => dodajWpis(wpis));
   }
 
   function cofnijWymiane() {
@@ -704,9 +769,10 @@
     const n = Math.round(Number($('u-bonus').value));
     if (!Number.isFinite(n) || n < 1 || n > 500) { powiedz('bonus-info', 'Wpisz od 1 do 500 punktów.', true); return; }
     const opis = $('u-bonus-opis').value.trim().slice(0, 40);
-    stan.sloik.punkty += n;
-    stan.sloik.historia.push({ ts: Date.now(), zmiana: n, powod: 'bonus', opis });
-    zapisz(); panelSloika();
+    const wpis = { ts: Date.now(), zmiana: n, powod: 'bonus', opis };
+    dodajWpis(wpis);
+    krok('bonus', () => usunWpis(wpis), () => dodajWpis(wpis));
+    cofnijNaChwile();
     $('u-bonus').value = ''; $('u-bonus-opis').value = ''; powiedz('bonus-info', '');
   }
 
@@ -736,11 +802,13 @@
     catch (e) { if (e && e.name !== 'AbortError') powiedz('eksport-info', 'Nie udało się wysłać. Użyj „Pobierz tabelę”.', true); }
   }
 
-  // Kasowanie bez pytania: dane idą najpierw do kopii, a „Cofnij wyczyszczenie” je przywraca.
+  // Kasowanie bez pytania: dane idą najpierw do kopii, a „Cofnij wyczyszczenie” albo Ctrl+Z je przywraca.
   async function wyczysc() {
     if (!(await B.wyczysc())) { powiedz('dane-info', 'Nie udało się zrobić kopii, więc nic nie zostało skasowane.', true); return; }
     stan = B.wczytajStan();
     await pokazRodzicow(); wybierzZakladke('dane');
+    const naNowo = async ok => { if (!ok) return false; stan = B.wczytajStan(); await pokazRodzicow(); wybierzZakladke('dane'); return true; };
+    krok('wyczyszczenie', async () => naNowo(await B.cofnijWyczyszczenie()), async () => naNowo(await B.wyczysc()), true);
   }
 
   async function cofnijWyczyszczenie() {
@@ -782,11 +850,16 @@
     });
     $('przerwa-koniec').addEventListener('click', () => (przerwaZ === 'slupek' ? koniecSlupka() : zakonczSesje()));
     for (const k of ['reszta', 'slupek']) {
-      $(`modul-${k}`).addEventListener('change', ev => { stan.ustawienia.moduly[k] = ev.target.value; zapisz(); panelModulow(); });
+      $(`modul-${k}`).addEventListener('change', ev => {
+        const przed = { moduly: { ...stan.ustawienia.moduly } };
+        stan.ustawienia.moduly[k] = ev.target.value; zapisz(); panelModulow();
+        zmianaUstawien('zmiana modułu', przed, { moduly: { ...stan.ustawienia.moduly } });
+      });
     }
     $('u-zadan').addEventListener('change', ev => {
-      const n = Math.round(Number(ev.target.value));
+      const n = Math.round(Number(ev.target.value)), przed = stan.ustawienia.zadanSlupka;
       stan.ustawienia.zadanSlupka = Number.isFinite(n) ? Math.min(6, Math.max(1, n)) : 3; zapisz(); panelModulow();
+      zmianaUstawien('zmiana liczby zadań', { zadanSlupka: przed }, { zadanSlupka: stan.ustawienia.zadanSlupka });
     });
     $('koniec-wroc').addEventListener('click', () => { odswiezStart(); pokaz('start'); });
     $('sloik-wroc').addEventListener('click', () => { odswiezStart(); pokaz('start'); });
@@ -810,12 +883,18 @@
     $('zmien-pin').addEventListener('click', () => {
       const v = $('nowy-pin').value.trim();
       if (!/^[0-9]{4,8}$/.test(v)) return;
+      const przed = stan.ustawienia.pin;
       stan.ustawienia.pin = v; zapisz(); $('nowy-pin').value = ''; panelUstawien();
+      zmianaUstawien('zmiana PIN-u', { pin: przed }, { pin: v });
       powiedz('pin-info', 'PIN zmieniony.');
     });
     $('przywroc-kolejnosc').addEventListener('click', () => {
+      const teraz = () => Object.fromEntries(Object.entries(kolejnosci).map(([n, k]) => [n, k.kolejnosc()]));
+      const przed = teraz();
       for (const k of Object.values(kolejnosci)) k.przywroc();
       panelUstawien();
+      const uloz = o => () => { for (const [n, l] of Object.entries(o)) kolejnosci[n].ustaw(l); return true; };
+      krok('przywrócenie kolejności', uloz(przed), uloz(teraz()));
     });
     $('wyczysc').addEventListener('click', wyczysc);
     $('cofnij-wyczyszczenie').addEventListener('click', cofnijWyczyszczenie);
@@ -823,6 +902,14 @@
     // Klawiatura komputera: cyfry, Backspace, Enter, Escape.
     document.addEventListener('keydown', ev => {
       const e = document.body.dataset.ekran;
+      // Ctrl+Z cofa, Ctrl+Y i Ctrl+Shift+Z ponawiają. W polu tekstowym zostaje zwykłe cofanie pisania, w ćwiczeniu nic.
+      if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && /^[zy]$/i.test(ev.key)) {
+        const wPolu = ev.target && ev.target.closest && ev.target.closest('input, textarea, select, [contenteditable="true"]');
+        if (wPolu || e === 'sesja' || e === 'slupek') return;
+        ev.preventDefault();
+        if (ev.key.toLowerCase() === 'y' || ev.shiftKey) ponowKrok(); else cofnijKrok();
+        return;
+      }
       // Escape cofa ze Słoika, PIN-u i widoku rodziców. W sesji nie: łatwo o pomyłkę.
       if (ev.key === 'Escape' && (e === 'sloik' || e === 'pin' || e === 'rodzice')) { wstecz(); ev.preventDefault(); return; }
       if ((e !== 'sesja' && e !== 'slupek') || ev.altKey || ev.ctrlKey || ev.metaKey) return;
@@ -835,8 +922,8 @@
       }
     });
 
-    kolejnosci.kafle = P.wlacz($('kafle'), { klucz: 'kafle-start', ogloszenie: ogloś });
-    kolejnosci.zakladki = P.wlacz($('zakladki'), { klucz: 'zakladki-rodzice', ogloszenie: ogloś, poZmianie: () => { if (kolejnosci.zakladki) panelUstawien(); } });
+    kolejnosci.kafle = P.wlacz($('kafle'), { klucz: 'kafle-start', ogloszenie: ogloś, poPrzestawieniu: przestawienie('kafle') });
+    kolejnosci.zakladki = P.wlacz($('zakladki'), { klucz: 'zakladki-rodzice', ogloszenie: ogloś, poZmianie: () => { if (kolejnosci.zakladki) panelUstawien(); }, poPrzestawieniu: przestawienie('zakladki') });
   }
 
   function start() {

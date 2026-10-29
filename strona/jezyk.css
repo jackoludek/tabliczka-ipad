@@ -1,0 +1,566 @@
+/* Język wyglądu Jacka 0.1.0 (stan 2026-10-28): zmienne i klocki dla stron.
+   Wygenerowane z jezyk/tokeny.json przez jezyk/generuj.mjs. Nie zmieniaj ręcznie: zmieniasz tokeny i uruchamiasz generator. */
+
+:root {
+  --wz-paleta-bialy: #ffffff;
+  --wz-paleta-czarny: #000000;
+  --wz-paleta-grafit: #1d1d1f;
+  --wz-paleta-grafit-jasny: #3a3a3c;
+  --wz-paleta-szary-drugi: #636366;
+  --wz-paleta-szary-apple: #6e6e73;
+  --wz-paleta-szary-obwodki: #86868b;
+  --wz-paleta-szary-obwodki-ciemny: #7c7c80;
+  --wz-paleta-srebrny: #c7c7cc;
+  --wz-paleta-srebrny-gnome: #c0bfbc;
+  --wz-paleta-srebrny-znak: #aeaeb2;
+  --wz-paleta-mgla: #d2d2d7;
+  --wz-paleta-szary-kafla: #e5e5ea;
+  --wz-paleta-szary-przycisku: #e8e8ed;
+  --wz-paleta-tlo-drugie: #f5f5f7;
+  --wz-paleta-noc1: #1c1c1e;
+  --wz-paleta-noc2: #2c2c2e;
+  --wz-paleta-noc3: #48484a;
+  --wz-paleta-niebieski: #0071e3;
+  --wz-paleta-niebieski-ciemny: #409cff;
+  --wz-paleta-niebieski-gleboki: #0040dd;
+  --wz-paleta-niebieski-jasny: #84b0ea;
+  --wz-paleta-link: #0066cc;
+  --wz-paleta-link-ciemny: #2997ff;
+  --wz-paleta-zielony: #34c759;
+  --wz-paleta-zielony-ciemny: #30d158;
+  --wz-paleta-zielony-gleboki: #248a3d;
+  --wz-paleta-zielony-napis: #1f7a36;
+  --wz-paleta-pomaranczowy: #ff9f0a;
+  --wz-paleta-pomaranczowy-gleboki: #c93400;
+  --wz-paleta-czerwony: #d70015;
+  --wz-paleta-czerwony-ciemny: #ff6961;
+  --wz-paleta-zolty: #ffcc00;
+  --wz-paleta-fiolet: #a843db;
+  --wz-paleta-zaznaczenie: #7138cc;
+  --wz-paleta-zaznaczenie-ciemne: #9e61ff;
+  --wz-odstep-skala-4: 4px;
+  --wz-odstep-skala-8: 8px;
+  --wz-odstep-skala-12: 12px;
+  --wz-odstep-skala-16: 16px;
+  --wz-odstep-skala-24: 24px;
+  --wz-odstep-skala-32: 32px;
+  --wz-odstep-skala-48: 48px;
+  --wz-odstep-w-grupie: 8px;
+  --wz-odstep-miedzy-pigulkami: 16px;
+  --wz-odstep-miedzy-grupami: 24px;
+  --wz-odstep-margines-okna: 24px;
+  --wz-odstep-bok-napisu: 16px;
+  --wz-odstep-miedzy-kaflami: 8px;
+  --wz-siatka-kolumny: 12;
+  --wz-siatka-odstep-telefon: 12px;
+  --wz-siatka-odstep-telefon-waski: 8px;
+  --wz-siatka-odstep-komputer: 16px;
+  --wz-siatka-odstep-komputer-szeroki: 24px;
+  --wz-promien-pigulka: 999px;
+  --wz-promien-karta: 18px;
+  --wz-promien-dymek: 14px;
+  --wz-promien-ikona: 5px;
+  --wz-promien-pole: 10px;
+  --wz-rozmiar-kolko: 28px;
+  --wz-rozmiar-kolumna-czytania: 653px;
+  --wz-rozmiar-przycisk: 36px;
+  --wz-rozmiar-przycisk-dotyk: 48px;
+  --wz-cel-mysz: 24px;
+  --wz-cel-palec: 48px;
+  --wz-cel-odstep-palca: 8px;
+  --wz-czas-wcisniecie: 80ms;
+  --wz-czas-zwykly: 200ms;
+  --wz-czas-rozwijanie: 350ms;
+  --wz-czas-powrot: 320ms;
+  --wz-czas-przytrzymanie: 500ms;
+  --wz-czas-dymek: 250ms;
+  --wz-czas-cofnij: 6000ms;
+  --wz-czas-mruganie-najkrocej: 1000ms;
+  --wz-krzywa-standard: cubic-bezier(0.2, 0, 0, 1);
+  --wz-krzywa-sprezyna: cubic-bezier(0.3, 1.7, 0.5, 1);
+  --wz-ruch-wcisniecie-skala: 1.03;
+  --wz-kroj-ui: "Segoe UI Variable Text", "Segoe UI", "SF Pro Text", -apple-system, system-ui, sans-serif;
+  --wz-kroj-strona: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --wz-kroj-mono: "Cascadia Code", "Consolas", "SF Mono", "Menlo", monospace;
+  --wz-litery-ui-komputer: 15px;
+  --wz-litery-ui-telefon: 17px;
+  --wz-litery-drugi-plan: 13px;
+  --wz-litery-najmniej: 12px;
+  --wz-litery-czytanie: 19px;
+  --wz-grubosc-zwykla: 400;
+  --wz-grubosc-mocna: 600;
+  --wz-interlinia-ui: 1.4;
+  --wz-interlinia-czytanie: 1.6;
+  --wz-kontrast-tekst: 4.5;
+  --wz-kontrast-grafika: 3;
+}
+
+:root,
+.wz-jasny {
+  color-scheme: light;
+  --wz-tlo: #ffffff;
+  --wz-tlo-drugie: #f5f5f7;
+  --wz-karta: #ffffff;
+  --wz-tekst: #1d1d1f;
+  --wz-tekst-drugi: #636366;
+  --wz-obwodka: rgb(0 0 0 / 0.12);
+  --wz-obwodka-pola: #86868b;
+  --wz-akcent: #0071e3;
+  --wz-na-akcencie: #ffffff;
+  --wz-fokus: #0071e3;
+  --wz-link: #0066cc;
+  --wz-blad: #d70015;
+  --wz-przycisk-szary: #e8e8ed;
+  --wz-stan-jest: #e5e5ea;
+  --wz-stan-pracuje: #34c759;
+  --wz-stan-czeka: #ff9f0a;
+  --wz-stan-skonczyl: #d70015;
+  --wz-stan-wybrane: #0071e3;
+  --wz-stan-szukanie: #a843db;
+  --wz-stan-lider: #a843db;
+  --wz-stan-zaznaczenie: #7138cc;
+  --wz-na-stanie-jest: #1d1d1f;
+  --wz-na-stanie-pracuje: #1d1d1f;
+  --wz-na-stanie-czeka: #1d1d1f;
+  --wz-na-stanie-skonczyl: #ffffff;
+  --wz-na-stanie-wybrane: #ffffff;
+  --wz-na-stanie-szukanie: #ffffff;
+  --wz-na-stanie-lider: #ffffff;
+  --wz-na-stanie-zaznaczenie: #ffffff;
+  --wz-skala-zly: rgb(255 56 60 / 0.42);
+  --wz-skala-slaby: rgb(255 141 40 / 0.42);
+  --wz-skala-sredni: rgb(255 204 0 / 0.42);
+  --wz-skala-dobry: rgb(52 199 89 / 0.42);
+  --wz-skala-napis: #1d1d1f;
+  --wz-szklo-blask: linear-gradient(135deg, rgb(255 255 255 / 0.8) 0%, rgb(255 255 255 / 0) 46%, rgb(0 0 0 / 0.045) 100%);
+  --wz-szklo-blask-pelny: linear-gradient(135deg, rgb(255 255 255 / 0.2) 0%, rgb(255 255 255 / 0) 34%);
+  --wz-szklo-blysk-krawedzi: rgb(255 255 255 / 0.95);
+  --wz-szklo-poswiata-wcisniecia: rgb(255 255 255 / 0.45);
+  --wz-szklo-brzeg: inset 1px 1px 0px 0px rgb(255 255 255 / 0.95), inset -1px -1px 0px 0px rgb(0 0 0 / 0.07), 0px 0px 0px 0.5px rgb(0 0 0 / 0.16);
+  --wz-szklo-cien: 1px 1px 2px 0px rgb(0 0 0 / 0.12), 3px 3px 8px 0px rgb(0 0 0 / 0.1), 6px 6px 18px 0px rgb(0 0 0 / 0.06);
+  --wz-szklo-cien-napisu: 1px 1px 2px 0px rgb(0 0 0 / 0.9);
+  --wz-szklo-sila-cienia-pelnego: 42%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.wz-jasny) {
+    color-scheme: dark;
+    --wz-tlo: #000000;
+    --wz-tlo-drugie: #1c1c1e;
+    --wz-karta: #000000;
+    --wz-tekst: #ffffff;
+    --wz-tekst-drugi: #c7c7cc;
+    --wz-obwodka: rgb(255 255 255 / 0.16);
+    --wz-obwodka-pola: #7c7c80;
+    --wz-akcent: #409cff;
+    --wz-na-akcencie: #000000;
+    --wz-fokus: #409cff;
+    --wz-link: #2997ff;
+    --wz-blad: #ff6961;
+    --wz-przycisk-szary: #2c2c2e;
+    --wz-stan-jest: #1c1c1e;
+    --wz-stan-pracuje: #30d158;
+    --wz-stan-czeka: #ff9f0a;
+    --wz-stan-skonczyl: #d70015;
+    --wz-stan-wybrane: #409cff;
+    --wz-stan-szukanie: #a843db;
+    --wz-stan-lider: #a843db;
+    --wz-stan-zaznaczenie: #9e61ff;
+    --wz-na-stanie-jest: #ffffff;
+    --wz-na-stanie-pracuje: #1d1d1f;
+    --wz-na-stanie-czeka: #1d1d1f;
+    --wz-na-stanie-skonczyl: #ffffff;
+    --wz-na-stanie-wybrane: #000000;
+    --wz-na-stanie-szukanie: #ffffff;
+    --wz-na-stanie-lider: #ffffff;
+    --wz-na-stanie-zaznaczenie: #000000;
+    --wz-skala-zly: rgb(255 66 69 / 0.42);
+    --wz-skala-slaby: rgb(255 146 48 / 0.42);
+    --wz-skala-sredni: rgb(255 214 0 / 0.42);
+    --wz-skala-dobry: rgb(48 209 88 / 0.42);
+    --wz-skala-napis: #ffffff;
+    --wz-szklo-blask: linear-gradient(135deg, rgb(255 255 255 / 0.17) 0%, rgb(255 255 255 / 0) 50%);
+    --wz-szklo-blask-pelny: linear-gradient(135deg, rgb(255 255 255 / 0.2) 0%, rgb(255 255 255 / 0) 34%);
+    --wz-szklo-blysk-krawedzi: rgb(255 255 255 / 0.4);
+    --wz-szklo-poswiata-wcisniecia: rgb(255 255 255 / 0.26);
+    --wz-szklo-brzeg: inset 1px 1px 0px 0px rgb(255 255 255 / 0.24), inset -1px -1px 0px 0px rgb(0 0 0 / 0.45), 0px 0px 0px 0.5px rgb(255 255 255 / 0.2);
+    --wz-szklo-cien: 0px 0px 0px 0px rgb(0 0 0 / 0);
+    --wz-szklo-cien-napisu: 1px 1px 2px 0px rgb(0 0 0 / 0.9);
+    --wz-szklo-sila-cienia-pelnego: 0%;
+  }
+}
+
+.wz-ciemny {
+  color-scheme: dark;
+  --wz-tlo: #000000;
+  --wz-tlo-drugie: #1c1c1e;
+  --wz-karta: #000000;
+  --wz-tekst: #ffffff;
+  --wz-tekst-drugi: #c7c7cc;
+  --wz-obwodka: rgb(255 255 255 / 0.16);
+  --wz-obwodka-pola: #7c7c80;
+  --wz-akcent: #409cff;
+  --wz-na-akcencie: #000000;
+  --wz-fokus: #409cff;
+  --wz-link: #2997ff;
+  --wz-blad: #ff6961;
+  --wz-przycisk-szary: #2c2c2e;
+  --wz-stan-jest: #1c1c1e;
+  --wz-stan-pracuje: #30d158;
+  --wz-stan-czeka: #ff9f0a;
+  --wz-stan-skonczyl: #d70015;
+  --wz-stan-wybrane: #409cff;
+  --wz-stan-szukanie: #a843db;
+  --wz-stan-lider: #a843db;
+  --wz-stan-zaznaczenie: #9e61ff;
+  --wz-na-stanie-jest: #ffffff;
+  --wz-na-stanie-pracuje: #1d1d1f;
+  --wz-na-stanie-czeka: #1d1d1f;
+  --wz-na-stanie-skonczyl: #ffffff;
+  --wz-na-stanie-wybrane: #000000;
+  --wz-na-stanie-szukanie: #ffffff;
+  --wz-na-stanie-lider: #ffffff;
+  --wz-na-stanie-zaznaczenie: #000000;
+  --wz-skala-zly: rgb(255 66 69 / 0.42);
+  --wz-skala-slaby: rgb(255 146 48 / 0.42);
+  --wz-skala-sredni: rgb(255 214 0 / 0.42);
+  --wz-skala-dobry: rgb(48 209 88 / 0.42);
+  --wz-skala-napis: #ffffff;
+  --wz-szklo-blask: linear-gradient(135deg, rgb(255 255 255 / 0.17) 0%, rgb(255 255 255 / 0) 50%);
+  --wz-szklo-blask-pelny: linear-gradient(135deg, rgb(255 255 255 / 0.2) 0%, rgb(255 255 255 / 0) 34%);
+  --wz-szklo-blysk-krawedzi: rgb(255 255 255 / 0.4);
+  --wz-szklo-poswiata-wcisniecia: rgb(255 255 255 / 0.26);
+  --wz-szklo-brzeg: inset 1px 1px 0px 0px rgb(255 255 255 / 0.24), inset -1px -1px 0px 0px rgb(0 0 0 / 0.45), 0px 0px 0px 0.5px rgb(255 255 255 / 0.2);
+  --wz-szklo-cien: 0px 0px 0px 0px rgb(0 0 0 / 0);
+  --wz-szklo-cien-napisu: 1px 1px 2px 0px rgb(0 0 0 / 0.9);
+  --wz-szklo-sila-cienia-pelnego: 0%;
+}
+
+/* ===== Klocki. Barwy biorą z ról motywu, więc działają w jasnym, w ciemnym i w poddrzewie z klasą .wz-jasny albo .wz-ciemny. */
+
+/* Przycisk: wariant 4 „Szkło z iOS 26” (decyzja D-032). Światło z lewego górnego rogu pod 45°, cień w prawo w dół
+   (w ciemnym bez cienia). Pod kursorem błysk na górnej krawędzi idzie za myszą, wciśnięty rośnie i rozświetla się
+   od miejsca dotyku, puszczony wraca sprężyście. Miejsce kursora (--mx, --my) daje jezyk.js.
+   Użycie: <button class="wz-przycisk"><span class="t">Zapisz</span></button>, główny: class="wz-przycisk wz-pelny",
+   sam znak: "wz-przycisk wz-kolko". Napis zawsze w <span class="t">, bo tylko tam stoi na środku wersalików (D-202). */
+.wz-przycisk {
+  --p-tlo: var(--wz-przycisk-szary);
+  --p-napis: var(--wz-tekst);
+  --p-blask: var(--wz-szklo-blask);
+  --p-cien: var(--wz-szklo-cien);
+  --p-wys: var(--wz-rozmiar-przycisk);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wz-odstep-skala-8);
+  box-sizing: border-box;
+  min-height: var(--p-wys);
+  min-width: var(--p-wys);
+  margin: 0;
+  padding: 0 var(--wz-odstep-bok-napisu);
+  border: 0;
+  border-radius: var(--p-promien, 999px);
+  font: inherit;
+  font-weight: var(--wz-grubosc-mocna);
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--p-napis);
+  background: var(--p-blask), var(--p-tlo);
+  box-shadow: var(--wz-szklo-brzeg), var(--p-cien);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--wz-czas-powrot) var(--wz-krzywa-sprezyna), background-color var(--wz-czas-zwykly);
+}
+.wz-przycisk::before,
+.wz-przycisk::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--wz-czas-zwykly);
+}
+.wz-przycisk::before { background: radial-gradient(circle 80px at var(--mx, 50%) var(--my, 50%), var(--wz-szklo-poswiata-wcisniecia), transparent 75%); }
+.wz-przycisk::after { background: radial-gradient(56px 14px at var(--mx, 50%) 0, var(--wz-szklo-blysk-krawedzi), transparent); }
+@media (hover: hover) { .wz-przycisk:hover::after { opacity: 1; } }
+.wz-przycisk:active { transform: scale(var(--p-wcisniecie, var(--wz-ruch-wcisniecie-skala))); transition-duration: var(--wz-czas-wcisniecie); }
+.wz-przycisk:active::before { opacity: 1; transition-duration: var(--wz-czas-wcisniecie); }
+.wz-przycisk:active::after { opacity: 0; }
+.wz-przycisk:focus-visible { outline: 2px solid var(--wz-fokus); outline-offset: 2px; }
+.wz-przycisk:disabled,
+.wz-przycisk[aria-disabled="true"] { cursor: default; opacity: .45; transform: none; }
+.wz-przycisk:disabled::before,
+.wz-przycisk:disabled::after { display: none; }
+@media (pointer: coarse) { .wz-przycisk { --p-wys: var(--wz-rozmiar-przycisk-dotyk); } }
+@media (prefers-reduced-motion: reduce) { .wz-przycisk { transition-timing-function: ease-out; } }
+
+/* Główny przycisk w akcencie, najwyżej jeden na ekranie (D-012). Cień w jego barwie, w ciemnym bez cienia. */
+.wz-pelny {
+  --p-tlo: var(--wz-akcent);
+  --p-napis: var(--wz-na-akcencie);
+  --p-blask: var(--wz-szklo-blask-pelny);
+  --p-cien: 3px 3px 10px color-mix(in srgb, var(--p-tlo) var(--wz-szklo-sila-cienia-pelnego), transparent);
+}
+
+/* Sam znak: koło na środku swojego miejsca (D-022). Znak (svg 16 px) stoi na środku widocznego koła. */
+.wz-kolko {
+  --p-wys: var(--wz-rozmiar-kolko);
+  width: var(--p-wys);
+  height: var(--p-wys);
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+}
+.wz-kolko > svg { width: 16px; height: 16px; flex: none; }
+@media (pointer: coarse) { .wz-kolko { --p-wys: var(--wz-rozmiar-przycisk-dotyk); } }
+
+/* Rząd równych pigułek: osobne przyciski, jedna szerokość, odstęp 16 px (D-021, D-040). */
+.wz-rzad {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--k-odstep, var(--wz-odstep-miedzy-pigulkami));
+}
+.wz-rzad > .wz-przycisk { min-width: 0; }
+
+/* Siatka ekranu (D-020, D-123): 12 kolumn, margines i odstęp na komputerze 24 i 16 px, poniżej 600 px (telefon) 12 i 12 px,
+   poniżej 380 px 8 i 8 px. Rzecz bierze kolumny przez grid-column (span 6, 4 / 10), domyślnie cały rząd. Rząd pigułek
+   i kafelki w środku biorą ten sam odstęp (--k-odstep), więc ich krawędzie stoją na liniach siatki.
+   Użycie: <main class="wz-siatka">…</main>. */
+.wz-siatka {
+  --k-m: var(--wz-odstep-margines-okna);
+  --k-odstep: var(--wz-siatka-odstep-komputer);
+  display: grid;
+  grid-template-columns: repeat(var(--wz-siatka-kolumny), minmax(0, 1fr));
+  column-gap: var(--k-odstep);
+  row-gap: var(--wz-odstep-miedzy-grupami);
+  align-content: start;
+  box-sizing: border-box;
+  /* Pełny ekran na telefonie (viewport-fit=cover): margines nigdy mniejszy niż wycięcie ekranu i pasek gestów. */
+  padding: max(var(--k-m), env(safe-area-inset-top, 0px)) max(var(--k-m), env(safe-area-inset-right, 0px)) max(var(--k-m), env(safe-area-inset-bottom, 0px)) max(var(--k-m), env(safe-area-inset-left, 0px));
+}
+.wz-siatka > * { grid-column: 1 / -1; min-width: 0; }
+@media (max-width: 599.98px) { .wz-siatka { --k-m: var(--wz-siatka-odstep-telefon); --k-odstep: var(--wz-siatka-odstep-telefon); } }
+@media (max-width: 379.98px) { .wz-siatka { --k-m: var(--wz-siatka-odstep-telefon-waski); --k-odstep: var(--wz-siatka-odstep-telefon-waski); } }
+/* Napis w <span class="t">: linia przycięta od wersalików do linii pisma (text-box), więc środek wersalików stoi na środku
+   przycisku w każdym kroju (D-202). Gdy pigułka jest za wąska, napis skraca się wielokropkiem. Obcięcie tylko w poziomie
+   (overflow-x: clip), żeby nie uciąć akcentów i ogonków, które wystają poza przyciętą linię. */
+/* Chromium liczy 1cap w górę (przy 15 px 11 px, a wersaliki Segoe UI Variable i SF Pro mają 0,7 em, czyli 10,5 px), więc przycięty
+   napis stał 0,25 px pod środkiem. Idzie w górę o połowę tej różnicy (D-203): przy 15 px o 0,25 px, przy 13 i 17 px prawie wcale. */
+.wz-przycisk > .t { min-width: 0; overflow-x: clip; text-overflow: ellipsis; white-space: nowrap; text-box: trim-both cap alphabetic; position: relative; top: calc((0.7em - 1cap) / 2); }
+
+/* Wybrany: pastel swojej barwy (--p-barwa, domyślnie akcent), pierścień do środka (D-174), włosek i pogrubienie (D-041; S-05 czeka). */
+.wz-przycisk[aria-pressed="true"],
+.wz-przycisk[aria-current="page"],
+.wz-przycisk[aria-selected="true"],
+.wz-przycisk.wz-wybrany {
+  --p-tlo: color-mix(in srgb, var(--p-barwa, var(--wz-akcent)) 16%, var(--wz-tlo));
+  --p-napis: var(--wz-tekst);
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px var(--p-barwa, var(--wz-akcent)), inset 0 0 0 4px var(--wz-tlo), var(--wz-szklo-brzeg), var(--p-cien);
+}
+
+/* Blok z treścią: zawsze ramka 1 px (D-003), bez reakcji na dotyk. */
+.wz-karta {
+  box-sizing: border-box;
+  border: 1px solid var(--wz-obwodka);
+  border-radius: var(--wz-promien-karta);
+  background: var(--wz-karta);
+  color: var(--wz-tekst);
+  padding: var(--wz-odstep-skala-16);
+}
+
+/* Dymek: karta na środku pod rzeczą, tekst na środku w pionie (D-075). Miejsce liczy program. */
+.wz-dymek {
+  position: fixed;
+  z-index: 1000;
+  box-sizing: border-box;
+  max-width: 300px;
+  padding: 8px 12px;
+  border: 1px solid var(--wz-obwodka);
+  border-radius: var(--wz-promien-dymek);
+  background: var(--wz-karta);
+  color: var(--wz-tekst);
+  font-size: var(--wz-litery-drugi-plan);
+  line-height: 1.35;
+  box-shadow: var(--wz-szklo-cien);
+  pointer-events: none;
+}
+
+/* Pole tekstowe i szukania (D-089). */
+.wz-pole {
+  box-sizing: border-box;
+  min-height: var(--wz-rozmiar-przycisk);
+  padding: 0 12px;
+  border: 1px solid var(--wz-obwodka-pola);
+  border-radius: var(--wz-promien-pole);
+  background: var(--wz-karta);
+  color: var(--wz-tekst);
+  font: inherit;
+}
+.wz-pole::placeholder { color: var(--wz-tekst-drugi); }
+.wz-pole:focus-visible { outline: 2px solid var(--wz-fokus); outline-offset: 1px; }
+
+/* Drugi plan w klocku: szary napis zwykłej grubości. */
+.wz-drugi { color: var(--wz-tekst-drugi); }
+.wz-przycisk > .wz-drugi { font-weight: var(--wz-grubosc-zwykla); }
+
+/* Ikonka rzeczy: zaokrąglony kwadrat z gradientem z góry na dół (dół o stopień ciemniejszy) i białym znakiem.
+   20 px w liście ze znakiem 12 px, 36 px w kafelku ze znakiem 22 px. Barwy w --g1 i --g2. */
+.wz-ikonka { display: inline-grid; place-items: center; flex: none; width: 20px; height: 20px; border-radius: var(--wz-promien-ikona); background: linear-gradient(180deg, var(--g1, var(--wz-paleta-niebieski)), var(--g2, var(--wz-paleta-niebieski-gleboki))); color: var(--wz-paleta-bialy); box-shadow: inset 0 0 0 .5px rgb(0 0 0 / .14); }
+.wz-ikonka > svg { width: 12px; height: 12px; stroke-width: 2.2; }
+.wz-ikonka.duza { width: 36px; height: 36px; border-radius: 9px; }
+.wz-ikonka.duza > svg { width: 22px; height: 22px; stroke-width: 1.8; }
+
+/* Przełącznik (D-204, propozycja). Wyłączony: biały tor z szarą obwódką i szarą gałką. Włączony: tor w akcencie i biała gałka,
+   bo niebieski znaczy „wybrane” (D-010). Tor 46 × 28 px. Najlepiej cały wiersz jest przełącznikiem, z celem 48 px:
+   <button class="wz-przycisk wz-wiersz" role="switch" aria-checked="false"><span class="t">Dźwięk</span><span class="wz-przelacznik"></span></button>.
+   Sam tor też działa: <button class="wz-przelacznik" role="switch" aria-checked="false" aria-label="Dźwięk"></button>. */
+.wz-przelacznik { position: relative; flex: none; box-sizing: border-box; width: 46px; height: 28px; margin: 0; padding: 0; border: 1px solid var(--wz-tekst-drugi); border-radius: 999px; background: var(--wz-karta); transition: background-color var(--wz-czas-zwykly), border-color var(--wz-czas-zwykly); }
+.wz-przelacznik::after { content: ""; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: var(--wz-tekst-drugi); box-shadow: 1px 1px 3px rgb(0 0 0 / .2); transition: transform var(--wz-czas-powrot) var(--wz-krzywa-sprezyna), scale var(--wz-czas-powrot) var(--wz-krzywa-sprezyna), background-color var(--wz-czas-zwykly); }
+.wz-przelacznik[aria-checked="true"],
+[aria-checked="true"] > .wz-przelacznik { border-color: var(--wz-akcent); background: var(--wz-akcent); }
+.wz-przelacznik[aria-checked="true"]::after,
+[aria-checked="true"] > .wz-przelacznik::after { transform: translateX(18px); background: var(--wz-paleta-bialy); }
+.wz-przelacznik:active::after,
+[role="switch"]:active > .wz-przelacznik::after { scale: 1.09; transition-duration: var(--wz-czas-wcisniecie); }
+button.wz-przelacznik { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button.wz-przelacznik:focus-visible { outline: 2px solid var(--wz-fokus); outline-offset: 2px; }
+button.wz-przelacznik:disabled { cursor: default; opacity: .45; }
+
+/* Wiersz-przycisk: pozycja listy jako osobny kafelek na całą szerokość, 48 px (D-166). Napis z lewej rośnie,
+   drugi plan i › stoją z prawej, ikonka rzeczy przed napisem. */
+.wz-wiersz { --p-wys: 48px; --p-promien: var(--wz-promien-karta); justify-content: space-between; text-align: left; }
+.wz-wiersz > .t:not(.wz-drugi, .drugi) { flex: 1 1 auto; }
+
+/* Lista: osobne kafelki co 12 px, a nie wiersze wspólnej tabeli (D-166). Podrzędna pozycja wcięta o 16 px na poziom (D-193). */
+.wz-lista { display: grid; gap: var(--wz-odstep-skala-12); align-content: start; }
+.wz-lista > [data-poziom="1"] { margin-inline-start: 16px; }
+.wz-lista > [data-poziom="2"] { margin-inline-start: 32px; }
+
+/* Kafelki: rzędy równych kafelków co 16 px (D-021, D-025), w rzędzie --k-kolumny (1, 2, 3, 4 albo 6). Kafelek to przycisk
+   z dużą ikonką rzeczy przed nazwą i rogami karty. */
+.wz-kafelki { display: grid; grid-template-columns: repeat(var(--k-kolumny, 2), minmax(0, 1fr)); gap: var(--k-odstep, var(--wz-odstep-miedzy-pigulkami)); }
+.wz-kafelek { --p-wys: 64px; --p-promien: var(--wz-promien-karta); justify-content: flex-start; gap: var(--wz-odstep-skala-12); padding: 0 var(--wz-odstep-skala-16) 0 var(--wz-odstep-skala-12); text-align: left; }
+
+/* Zakładki na dole ekranu telefonu: 3 albo 4 równe (D-121), osobne pigułki co 16 px (D-040), ikona 24 px nad napisem 13 px.
+   Wybrana ma pastel, pierścień do środka i pogrubienie (D-041, D-174) i stoi w polu tej samej wielkości (D-044). Pasek biały (D-015). */
+.wz-zakladki { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--wz-odstep-miedzy-pigulkami); padding: var(--wz-odstep-skala-8); border: 1px solid var(--wz-obwodka); border-radius: 999px; background: var(--wz-karta); box-shadow: var(--wz-szklo-cien); }
+.wz-zakladki > .wz-przycisk { --p-wys: 56px; flex-direction: column; justify-content: flex-start; gap: 3px; padding: 7px var(--wz-odstep-skala-8) 0; font-size: var(--wz-litery-drugi-plan); }
+/* Optyczny środek (D-150): znak i napis stoją od góry na pełnych pikselach (7 px, znak 24, przerwa 3, napis), bo przeglądarka stawia
+   linię pisma na pełnym pikselu. Znaki zakładek mają jedną wysokość atramentu (4,6–19,4 w polu 24). Środek znaku i wersalików wypada
+   0,7 px nad środkiem zakładki, a z ogonkami (j, p, y) 0,7 px pod nim. */
+.wz-zakladki > .wz-przycisk > svg { width: 24px; height: 24px; flex: none; }
+
+/* Alert przed Koszem: jedyne pytanie w programach (D-070, D-071). Rysowany w programie jak alert macOS: ikonka 64 px,
+   pogrubiony tytuł, krótki opis, „Anuluj” i niebieski przycisk z czasownikiem po prawej. Return potwierdza, Escape anuluje. */
+.wz-alert { box-sizing: border-box; display: grid; justify-items: center; gap: var(--wz-odstep-skala-8); width: min(300px, 100%); padding: var(--wz-odstep-skala-24) var(--wz-odstep-skala-16) var(--wz-odstep-skala-16); border: 1px solid var(--wz-obwodka); border-radius: var(--wz-promien-karta); background: var(--wz-karta); color: var(--wz-tekst); text-align: center; box-shadow: var(--wz-szklo-cien); }
+.wz-alert > .wz-ikonka { width: 64px; height: 64px; margin-bottom: var(--wz-odstep-skala-4); border-radius: 14px; }
+.wz-alert > .wz-ikonka > svg { width: 36px; height: 36px; stroke-width: 1.6; }
+.wz-alert > b { font-weight: var(--wz-grubosc-mocna); line-height: 20px; }
+.wz-alert > p { margin: 0; font-size: var(--wz-litery-drugi-plan); line-height: 18px; }
+.wz-alert > .wz-rzad { justify-self: stretch; margin-top: var(--wz-odstep-skala-8); }
+
+/* Arkusz na środku okna: 420–560 px, nigdy szerszy niż okno minus 24 px z każdej strony (D-072). Bez tytułu, który powtarza
+   to, co widać (D-058), i bez „Gotowe” (D-087): zamyka X w kółku i Escape. Gdy treść się nie mieści, przewija się środek.
+   Przyciski na dole po prawej, główny na końcu (D-012). Przesuwa chwyt w wolnym miejscu, skaluje uchwyt w rogu (D-073). */
+.wz-arkusz { box-sizing: border-box; position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; width: min(560px, 100vw - 48px, 100%); max-height: calc(100vh - 48px); border: 1px solid var(--wz-obwodka); border-radius: var(--wz-promien-karta); background: var(--wz-karta); color: var(--wz-tekst); box-shadow: var(--wz-szklo-cien); }
+.wz-arkusz > .gora { display: flex; justify-content: flex-end; padding: var(--wz-odstep-skala-12) var(--wz-odstep-skala-12) 0; }
+.wz-arkusz > .srodek { display: grid; gap: var(--wz-odstep-skala-16); align-content: start; min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 0 var(--wz-odstep-skala-24); }
+.wz-arkusz > .dol { display: flex; justify-content: flex-end; gap: var(--wz-odstep-miedzy-pigulkami); padding: var(--wz-odstep-skala-24); }
+/* Uchwyt w prawym dolnym rogu: dwie ukośne kreski jak w macOS, skaluje od 75 do 160% (D-073, robi program). */
+.wz-uchwyt { position: absolute; right: 6px; bottom: 6px; width: 14px; height: 14px; cursor: nwse-resize; background: linear-gradient(135deg, transparent 0 50%, var(--wz-tekst-drugi) 50% 58%, transparent 58% 72%, var(--wz-tekst-drugi) 72% 80%, transparent 80%); }
+
+/* Menu prawego kliku: tekst 15 px, wiersze 36 px, znak 18 px, kreski między grupami (D-081). Szkło tylko tu, bo menu pływa
+   nad treścią (D-107). Każda pozycja ma w spoczynku lekkie tło (D-030), pod kursorem akcent 14%. Pozycja, która nic by
+   nie zrobiła, jest przygaszona, a nie schowana (D-047). */
+.wz-menu { box-sizing: border-box; display: grid; gap: 4px; min-width: 240px; padding: 6px; border: 1px solid var(--wz-obwodka); border-radius: 14px; background: color-mix(in srgb, var(--wz-karta) 88%, transparent); -webkit-backdrop-filter: blur(20px) saturate(1.8); backdrop-filter: blur(20px) saturate(1.8); box-shadow: var(--wz-szklo-cien); color: var(--wz-tekst); }
+.wz-menu > [role="menuitem"] { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 36px; margin: 0; padding: 0 var(--wz-odstep-bok-napisu); border: 0; border-radius: 8px; background: color-mix(in srgb, var(--wz-tekst) 5%, transparent); color: inherit; font: inherit; font-size: var(--wz-litery-ui-komputer); text-align: left; cursor: pointer; }
+.wz-menu > [role="menuitem"] > svg { width: 18px; height: 18px; }
+.wz-menu > [role="menuitem"] > .t { min-width: 0; overflow-x: clip; text-overflow: ellipsis; white-space: nowrap; text-box: trim-both cap alphabetic; position: relative; top: calc((0.7em - 1cap) / 2); }
+.wz-menu > [role="menuitem"] > .skrot { font-size: var(--wz-litery-drugi-plan); color: var(--wz-tekst-drugi); }
+@media (hover: hover) { .wz-menu > [role="menuitem"]:not([aria-disabled="true"]):hover { background: color-mix(in srgb, var(--wz-akcent) 14%, transparent); } }
+.wz-menu > [role="menuitem"]:focus-visible { outline: 2px solid var(--wz-fokus); outline-offset: -2px; }
+.wz-menu > [role="menuitem"][aria-disabled="true"] { cursor: default; opacity: .45; }
+.wz-menu > hr { height: 1px; margin: 4px 10px; border: 0; background: var(--wz-obwodka); }
+
+/* „Cofnij” po operacji (D-205): razem 6 s błękitnego szkła, na końcu paruje. Na komputerze pod napisem drugim planem skrót „Ctrl+Z”.
+   Klik albo stuknięcie cofa od razu. Program pokazuje go tylko po świeżej operacji i nie daje mu fokusu z klawiatury. */
+.wz-cofnij { --p-tlo: color-mix(in srgb, var(--wz-akcent) 12%, var(--wz-karta)); --p-napis: var(--wz-link); --p-wys: 48px; flex-direction: column; gap: 4px; }
+.wz-cofnij > .skrot { font-size: var(--wz-litery-drugi-plan); font-weight: var(--wz-grubosc-zwykla); color: var(--wz-tekst-drugi); }
+.wz-cofnij.paruje { animation: wz-paruje var(--wz-czas-cofnij) linear forwards; }
+@keyframes wz-paruje { 0% { opacity: 0; transform: translateY(8px); } 4%, 75% { opacity: 1; transform: none; filter: none; } 100% { opacity: 0; transform: translateY(-10px); filter: blur(6px); } }
+
+/* Suwak: nazwa z lewej, wartość z prawej, pod nimi suwak w akcencie na całą szerokość. Rusza się płynnie, bez przyskakiwania (D-093). */
+.wz-suwak { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px var(--wz-odstep-skala-8); align-items: center; }
+.wz-suwak input { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: var(--wz-akcent); }
+.wz-suwak output { font-variant-numeric: tabular-nums; color: var(--wz-tekst-drugi); }
+
+/* Postęp, gdy wiadomo, ile zostało: pasek 6 px w akcencie na szarym torze, długość w --k-ile. Bez kółek, które kręcą się
+   bez końca (D-101). <div class="wz-pasek-postepu" role="progressbar" aria-valuenow="40" style="--k-ile: 40%"><i></i></div> */
+.wz-pasek-postepu { box-sizing: border-box; height: 6px; border-radius: 3px; background: var(--wz-przycisk-szary); overflow: hidden; }
+.wz-pasek-postepu > i { display: block; width: var(--k-ile, 0%); height: 100%; border-radius: inherit; background: var(--wz-akcent); transition: width var(--wz-czas-zwykly) var(--wz-krzywa-standard); }
+
+/* Znacznik stanu: kolor całej pigułki i kółko ze znakiem na jej początku (D-045). Znak mówi, co zrobi klik: ❚❚ zatrzyma,
+   ▶ uruchomi (D-046). Stan w data-stan: jest, pracuje, czeka albo skonczyl. Obok koloru zawsze znak i słowo (D-011). */
+.wz-znacznik { --p-tlo: var(--wz-stan-jest); --p-napis: var(--wz-na-stanie-jest); padding-left: 4px; }
+.wz-znacznik[data-stan="pracuje"] { --p-tlo: var(--wz-stan-pracuje); --p-napis: var(--wz-na-stanie-pracuje); --p-blask: var(--wz-szklo-blask-pelny); }
+.wz-znacznik[data-stan="czeka"] { --p-tlo: var(--wz-stan-czeka); --p-napis: var(--wz-na-stanie-czeka); --p-blask: var(--wz-szklo-blask-pelny); }
+.wz-znacznik[data-stan="skonczyl"] { --p-tlo: var(--wz-stan-skonczyl); --p-napis: var(--wz-na-stanie-skonczyl); --p-blask: var(--wz-szklo-blask-pelny); }
+.wz-znacznik > .znak { display: inline-grid; place-items: center; flex: none; width: calc(var(--p-wys) - 8px); height: calc(var(--p-wys) - 8px); border-radius: 50%; background: light-dark(var(--wz-paleta-bialy), var(--wz-paleta-noc1)); color: var(--wz-tekst-drugi); box-shadow: 0 0 0 .5px light-dark(rgb(0 0 0 / .16), rgb(255 255 255 / .22)); }
+.wz-znacznik[data-stan="pracuje"] > .znak { color: light-dark(var(--wz-paleta-zielony-gleboki), var(--wz-paleta-zielony-ciemny)); }
+.wz-znacznik[data-stan="czeka"] > .znak { color: light-dark(var(--wz-paleta-pomaranczowy-gleboki), var(--wz-paleta-pomaranczowy)); }
+.wz-znacznik[data-stan="skonczyl"] > .znak { color: var(--wz-blad); }
+.wz-znacznik > .znak > svg { width: round(calc((var(--p-wys) - 8px) * .43), 2px); height: round(calc((var(--p-wys) - 8px) * .43), 2px); }
+
+/* Pole szukania: lupka z lewej w polu tekstowym (D-089, D-099). Enter otwiera pierwszy wynik, Escape zamyka i czyści. */
+.wz-szukaj { position: relative; display: grid; }
+.wz-szukaj > svg { position: absolute; left: 12px; top: 50%; width: 16px; height: 16px; translate: 0 -50%; color: var(--wz-tekst-drugi); pointer-events: none; }
+.wz-szukaj > .wz-pole { padding-left: 36px; }
+
+/* Pole z nazwą drugim planem nad nim. */
+.wz-pole-z-nazwa { display: grid; gap: 6px; }
+.wz-pole-z-nazwa > span { font-size: var(--wz-litery-drugi-plan); line-height: 18px; color: var(--wz-tekst-drugi); }
+
+/* Przestawiany (D-091, D-092): po przytrzymaniu rośnie o 10%, ma ramkę w akcencie i jedzie za kursorem; kursor ze strzałkami,
+   bez znaku zakazu. Zachowanie daje jezyk.js dzieciom pojemnika z data-przestaw. */
+.wz-przestawiany { position: relative; z-index: 10; scale: 1.1; outline: 2px solid var(--wz-akcent); outline-offset: 2px; cursor: move; transition: scale var(--wz-czas-wcisniecie); }
+.wz-przestawianie, .wz-przestawianie * { cursor: move; user-select: none; -webkit-user-select: none; }
+/* Arkusz ruchomy (data-ruchomy): za górny pasek i uchwyt palec ciągnie, a nie przewija. Ukryte menu czeka na JezykWygladu.menu. */
+.wz-arkusz[data-ruchomy] > .gora, .wz-arkusz[data-ruchomy] .wz-uchwyt { touch-action: none; }
+.wz-menu[hidden] { display: none; }
+:is(.wz-arkusz, .wz-nota)[hidden] { display: none; }
+/* Arkusz pływający: stoi na środku okna nad treścią (D-072), a przesuwanie zostaje wolne, bo środek daje inset i margin, a nie translate. */
+.wz-arkusz.wz-plywa { position: fixed; inset: 0; z-index: 900; height: fit-content; margin: auto; }
+.wz-arkusz:not(:has(> .dol)) > .srodek { padding-bottom: var(--wz-odstep-skala-24); }
+
+/* Ściąga „i” (D-079, D-058): w środku arkusza karty z małym nagłówkiem, w szerokim arkuszu dwie kolumny. Znaki stoją w jednej kolumnie
+   tej samej szerokości, opisy zaczynają się w jednej linii, wiersze co 12 px. Klawisze w <kbd>. */
+.wz-sciaga { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--wz-odstep-miedzy-pigulkami); }
+.wz-sciaga > .wz-karta { display: grid; gap: var(--wz-odstep-skala-12); align-content: start; }
+.wz-sciaga h3 { margin: 0; font-size: var(--wz-litery-drugi-plan); line-height: 18px; font-weight: var(--wz-grubosc-mocna); color: var(--wz-tekst-drugi); }
+.wz-sciaga ul { display: grid; gap: var(--wz-odstep-skala-12); margin: 0; padding: 0; list-style: none; }
+.wz-sciaga li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--wz-odstep-skala-12); align-items: center; line-height: 21px; }
+.wz-sciaga li > .znak { display: inline-grid; place-items: center; justify-self: center; min-width: 28px; height: 28px; border-radius: 50%; background: var(--wz-przycisk-szary); color: var(--wz-tekst); }
+.wz-sciaga li > .znak > svg { width: 16px; height: 16px; }
+.wz-sciaga kbd, .wz-kbd { display: inline-grid; place-items: center; justify-self: center; box-sizing: border-box; min-width: 28px; height: 24px; padding: 0 6px; border: 1px solid var(--wz-obwodka); border-radius: 6px; background: var(--wz-tlo-drugie); color: var(--wz-tekst); font: var(--wz-grubosc-mocna) 12px/1 var(--wz-kroj-ui); }
+
+/* Nota: wiadomość na górze ekranu (D-120), zamyka ją małe X i przesunięcie w bok. Błąd (data-rodzaj="blad") ma ramkę w barwie błędu.
+   Sukces noty nie dostaje (D-103). */
+.wz-nota { box-sizing: border-box; display: flex; align-items: center; gap: var(--wz-odstep-skala-12); min-height: 48px; padding: 8px 8px 8px 12px; border: 1px solid var(--wz-obwodka); border-radius: var(--wz-promien-karta); background: var(--wz-karta); color: var(--wz-tekst); box-shadow: var(--wz-szklo-cien); touch-action: pan-y; }
+.wz-nota > .t { flex: 1 1 auto; min-width: 0; line-height: 21px; }
+.wz-nota[data-rodzaj="blad"] { border-color: var(--wz-blad); }
+
+/* Błąd przy rzeczy (D-103): jedno zdanie pod polem, które mówi, co zrobić; pole z aria-invalid ma ramkę w barwie błędu. */
+.wz-pole[aria-invalid="true"] { border-color: var(--wz-blad); }
+.wz-blad, .wz-pole-z-nazwa > .wz-blad { font-size: var(--wz-litery-drugi-plan); line-height: 18px; color: var(--wz-blad); }
+[data-menu]:focus-visible { outline: 2px solid var(--wz-fokus); outline-offset: 2px; }
+@media (pointer: coarse) { .wz-pole, .wz-menu > [role="menuitem"] { min-height: var(--wz-rozmiar-przycisk-dotyk); } }
+

@@ -14,6 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="ikona-180.png">
 <link rel="icon" href="ikona.svg" type="image/svg+xml">
+<link rel="stylesheet" href="jezyk.css">
 <link rel="stylesheet" href="styl.css">
 <title>Tabliczka</title>
 </head>
@@ -28,24 +29,24 @@
     <p class="wstep" id="start-wstep"></p>
   </header>
   <div class="kafle" id="kafle" aria-label="Menu. Kafelki można przestawiać: przeciągnij albo Alt i strzałka.">
-    <button class="kafel kafel-glowny" data-id="cwicz" id="przycisk-cwicz" type="button">
+    <button class="wz-przycisk wz-pelny kafel kafel-glowny" data-id="cwicz" id="przycisk-cwicz" type="button">
       <span class="kafel-tytul">Ćwicz</span>
       <span class="kafel-opis" id="cwicz-opis"></span>
     </button>
-    <button class="kafel" data-id="reszta" id="przycisk-reszta" type="button" hidden>
+    <button class="wz-przycisk kafel" data-id="reszta" id="przycisk-reszta" type="button" hidden>
       <span class="kafel-tytul">Z resztą</span>
       <span class="kafel-opis" id="reszta-opis">Na przykład 47 : 5 = 9 r. 2</span>
     </button>
-    <button class="kafel" data-id="slupek" id="przycisk-slupek" type="button" hidden>
+    <button class="wz-przycisk kafel" data-id="slupek" id="przycisk-slupek" type="button" hidden>
       <span class="kafel-tytul">Dzielenie w słupku</span>
       <span class="kafel-opis" id="slupek-opis"></span>
     </button>
-    <button class="kafel" data-id="sloik" id="przycisk-sloik" type="button">
+    <button class="wz-przycisk kafel" data-id="sloik" id="przycisk-sloik" type="button">
       <span class="kafel-tytul">Słoik</span>
       <span class="kafel-opis" id="sloik-opis"></span>
       <span class="pasek" aria-hidden="true"><span id="sloik-pasek"></span></span>
     </button>
-    <button class="kafel" data-id="rodzice" id="przycisk-rodzice" type="button">
+    <button class="wz-przycisk kafel" data-id="rodzice" id="przycisk-rodzice" type="button">
       <span class="kafel-tytul">Dla rodziców</span>
       <span class="kafel-opis">Postępy i ustawienia</span>
     </button>
@@ -55,9 +56,9 @@
 <!-- Sesja -->
 <main id="sesja" class="ekran ekran-sesja" hidden>
   <div class="sesja-gora">
-    <button class="cichy" id="sesja-koniec" type="button">Zakończ</button>
+    <button class="wz-przycisk cichy" id="sesja-koniec" type="button"><span class="t">Zakończ</span></button>
     <div class="postep" role="progressbar" aria-label="Postęp sesji" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="postep"><span id="postep-pasek"></span></div>
-    <button class="cichy" id="podpowiedz" type="button">Pomóż mi</button>
+    <button class="wz-przycisk cichy" id="podpowiedz" type="button"><span class="t">Pomóż mi</span></button>
   </div>
   <section class="karta-pytania" id="karta" aria-live="polite">
     <p class="dzialanie" id="dzialanie" tabindex="-1"></p>
@@ -70,22 +71,22 @@
     <p class="sposob" id="sposob"></p>
   </section>
   <div class="klawiatura" id="klawiatura" aria-label="Klawiatura">
-    <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
-    <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
-    <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
-    <button type="button" data-k="nie-wiem" class="klawisz-cichy" id="nie-wiem">Nie wiem</button>
-    <button type="button" data-k="0">0</button>
-    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę"><svg class="ikona-usun" viewBox="0 0 30 22" aria-hidden="true"><path d="M10 2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H10L2 11z"/><path d="m14.5 7 7 8m0-8-7 8"/></svg></button>
-    <button type="button" data-k="ok" class="klawisz-ok" id="klawisz-ok">Sprawdź</button>
+    <button class="wz-przycisk" type="button" data-k="1"><span class="t">1</span></button><button class="wz-przycisk" type="button" data-k="2"><span class="t">2</span></button><button class="wz-przycisk" type="button" data-k="3"><span class="t">3</span></button>
+    <button class="wz-przycisk" type="button" data-k="4"><span class="t">4</span></button><button class="wz-przycisk" type="button" data-k="5"><span class="t">5</span></button><button class="wz-przycisk" type="button" data-k="6"><span class="t">6</span></button>
+    <button class="wz-przycisk" type="button" data-k="7"><span class="t">7</span></button><button class="wz-przycisk" type="button" data-k="8"><span class="t">8</span></button><button class="wz-przycisk" type="button" data-k="9"><span class="t">9</span></button>
+    <button type="button" data-k="nie-wiem" class="wz-przycisk klawisz-cichy" id="nie-wiem"><span class="t">Nie wiem</span></button>
+    <button class="wz-przycisk" type="button" data-k="0"><span class="t">0</span></button>
+    <button type="button" data-k="usun" class="wz-przycisk klawisz-cichy" aria-label="Usuń ostatnią cyfrę"><svg class="ikona-usun" viewBox="0 0 30 22" aria-hidden="true"><path d="M10 2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H10L2 11z"/><path d="m14.5 7 7 8m0-8-7 8"/></svg></button>
+    <button type="button" data-k="ok" class="wz-przycisk wz-pelny klawisz-ok" id="klawisz-ok"><span class="t">Sprawdź</span></button>
   </div>
 </main>
 
 <!-- Słupek -->
 <main id="slupek" class="ekran ekran-sesja ekran-slupek" hidden>
   <div class="sesja-gora">
-    <button class="cichy" id="slupek-koniec" type="button">Zakończ</button>
+    <button class="wz-przycisk cichy" id="slupek-koniec" type="button"><span class="t">Zakończ</span></button>
     <div class="postep" role="progressbar" aria-label="Zadania w tej sesji" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="slupek-postep"><span id="slupek-postep-pasek"></span></div>
-    <button class="cichy" id="slupek-podpowiedz" type="button">Pomóż mi</button>
+    <button class="wz-przycisk cichy" id="slupek-podpowiedz" type="button"><span class="t">Pomóż mi</span></button>
   </div>
   <section class="karta-pytania karta-slupek" id="slupek-karta">
     <div class="slupek-ramka"><table class="slupek-tabela" id="slupek-tabela" aria-hidden="true"></table></div>
@@ -93,13 +94,13 @@
     <p class="sposob" id="slupek-info" aria-live="polite"></p>
   </section>
   <div class="klawiatura" id="klawiatura-slupek" aria-label="Klawiatura">
-    <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
-    <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
-    <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
-    <button type="button" data-k="nie-wiem" class="klawisz-cichy">Nie wiem</button>
-    <button type="button" data-k="0">0</button>
-    <button type="button" data-k="usun" class="klawisz-cichy" aria-label="Usuń ostatnią cyfrę"><svg class="ikona-usun" viewBox="0 0 30 22" aria-hidden="true"><path d="M10 2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H10L2 11z"/><path d="m14.5 7 7 8m0-8-7 8"/></svg></button>
-    <button type="button" data-k="ok" class="klawisz-ok" id="slupek-ok">Sprawdź</button>
+    <button class="wz-przycisk" type="button" data-k="1"><span class="t">1</span></button><button class="wz-przycisk" type="button" data-k="2"><span class="t">2</span></button><button class="wz-przycisk" type="button" data-k="3"><span class="t">3</span></button>
+    <button class="wz-przycisk" type="button" data-k="4"><span class="t">4</span></button><button class="wz-przycisk" type="button" data-k="5"><span class="t">5</span></button><button class="wz-przycisk" type="button" data-k="6"><span class="t">6</span></button>
+    <button class="wz-przycisk" type="button" data-k="7"><span class="t">7</span></button><button class="wz-przycisk" type="button" data-k="8"><span class="t">8</span></button><button class="wz-przycisk" type="button" data-k="9"><span class="t">9</span></button>
+    <button type="button" data-k="nie-wiem" class="wz-przycisk klawisz-cichy"><span class="t">Nie wiem</span></button>
+    <button class="wz-przycisk" type="button" data-k="0"><span class="t">0</span></button>
+    <button type="button" data-k="usun" class="wz-przycisk klawisz-cichy" aria-label="Usuń ostatnią cyfrę"><svg class="ikona-usun" viewBox="0 0 30 22" aria-hidden="true"><path d="M10 2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H10L2 11z"/><path d="m14.5 7 7 8m0-8-7 8"/></svg></button>
+    <button type="button" data-k="ok" class="wz-przycisk wz-pelny klawisz-ok" id="slupek-ok"><span class="t">Sprawdź</span></button>
   </div>
 </main>
 
@@ -109,8 +110,8 @@
     <h1 tabindex="-1">Chwila oddechu</h1>
     <p class="wstep">Weź trzy spokojne oddechy. Potem coś łatwego albo koniec na dziś. Obie drogi są dobre.</p>
     <div class="przyciski">
-      <button class="przycisk" id="przerwa-latwe" type="button">Zrób jeszcze 3 łatwe</button>
-      <button class="przycisk przycisk-drugi" id="przerwa-koniec" type="button">Zakończ na dziś</button>
+      <button class="wz-przycisk wz-pelny przycisk" id="przerwa-latwe" type="button"><span class="t">Zrób jeszcze 3 łatwe</span></button>
+      <button class="wz-przycisk przycisk przycisk-drugi" id="przerwa-koniec" type="button"><span class="t">Zakończ na dziś</span></button>
     </div>
   </div>
 </main>
@@ -122,14 +123,14 @@
     <div id="koniec-zdania" class="zdania"></div>
     <p class="punkty" id="koniec-punkty"></p>
     <div class="przyciski">
-      <button class="przycisk" id="koniec-wroc" type="button">Gotowe</button>
+      <button class="wz-przycisk wz-pelny przycisk" id="koniec-wroc" type="button"><span class="t">Gotowe</span></button>
     </div>
   </div>
 </main>
 
 <!-- Słoik -->
 <main id="sloik" class="ekran ekran-srodek" hidden>
-  <nav class="nawigacja"><button class="cichy wstecz" id="sloik-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>Wróć</button></nav>
+  <nav class="nawigacja"><button class="wz-przycisk cichy wstecz" id="sloik-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg><span class="t">Wróć</span></button></nav>
   <div class="tresc-srodek">
     <p class="nad">Słoik</p>
     <h1 tabindex="-1"><span id="sloik-punkty">0</span> punktów</h1>
@@ -143,30 +144,30 @@
 
 <!-- PIN rodziców -->
 <main id="pin" class="ekran ekran-srodek" hidden>
-  <nav class="nawigacja"><button class="cichy wstecz" id="pin-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>Wróć</button></nav>
+  <nav class="nawigacja"><button class="wz-przycisk cichy wstecz" id="pin-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg><span class="t">Wróć</span></button></nav>
   <form class="tresc-srodek" id="pin-formularz" autocomplete="off">
     <h1 tabindex="-1" id="pin-tytul">Dla rodziców</h1>
     <p class="wstep" id="pin-opis">Tu są postępy i ustawienia.</p>
     <label class="pole-etykieta" for="pin-pole">PIN</label>
     <input class="pole pole-pin" id="pin-pole" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" required>
     <p class="drugi" id="pin-blad" aria-live="assertive"></p>
-    <div class="przyciski"><button class="przycisk" type="submit">Dalej</button></div>
+    <div class="przyciski"><button class="wz-przycisk wz-pelny przycisk" type="submit"><span class="t">Dalej</span></button></div>
   </form>
 </main>
 
 <!-- Rodzice -->
 <main id="rodzice" class="ekran ekran-rodzice" hidden>
-  <nav class="nawigacja"><button class="cichy wstecz" id="rodzice-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg>Wróć</button></nav>
+  <nav class="nawigacja"><button class="wz-przycisk cichy wstecz" id="rodzice-wroc" type="button"><svg class="ikona-wstecz" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8"/></svg><span class="t">Wróć</span></button></nav>
   <h1 tabindex="-1">Dla rodziców</h1>
   <p class="podsumowanie"><span class="podsumowanie-stan" id="rodzice-podsumowanie"></span> <span id="rodzice-sesje"></span></p>
   <div class="zakladki" id="zakladki" role="tablist" aria-label="Widoki. Zakładki można przestawiać: przeciągnij albo Alt i strzałka.">
-    <button role="tab" data-id="mnozenie" type="button" aria-selected="true">Mnożenie</button>
-    <button role="tab" data-id="dzielenie" type="button" aria-selected="false">Dzielenie</button>
-    <button role="tab" data-id="reszta" type="button" aria-selected="false">Z resztą</button>
-    <button role="tab" data-id="slupek" type="button" aria-selected="false">Słupek</button>
-    <button role="tab" data-id="odpowiedzi" type="button" aria-selected="false">Odpowiedzi</button>
-    <button role="tab" data-id="nagroda" type="button" aria-selected="false">Słoik</button>
-    <button role="tab" data-id="dane" type="button" aria-selected="false">Ustawienia</button>
+    <button class="wz-przycisk" role="tab" data-id="mnozenie" type="button" aria-selected="true"><span class="t">Mnożenie</span></button>
+    <button class="wz-przycisk" role="tab" data-id="dzielenie" type="button" aria-selected="false"><span class="t">Dzielenie</span></button>
+    <button class="wz-przycisk" role="tab" data-id="reszta" type="button" aria-selected="false"><span class="t">Z resztą</span></button>
+    <button class="wz-przycisk" role="tab" data-id="slupek" type="button" aria-selected="false"><span class="t">Słupek</span></button>
+    <button class="wz-przycisk" role="tab" data-id="odpowiedzi" type="button" aria-selected="false"><span class="t">Odpowiedzi</span></button>
+    <button class="wz-przycisk" role="tab" data-id="nagroda" type="button" aria-selected="false"><span class="t">Słoik</span></button>
+    <button class="wz-przycisk" role="tab" data-id="dane" type="button" aria-selected="false"><span class="t">Ustawienia</span></button>
   </div>
 
   <section class="panel" id="panel-mnozenie" role="tabpanel">
@@ -217,8 +218,8 @@
   <section class="panel" id="panel-odpowiedzi" role="tabpanel" hidden>
     <p class="drugi">W tabeli jest każda odpowiedź z czasem. Otwiera się w Excelu.</p>
     <div class="przyciski przyciski-lewo przyciski-blisko">
-      <button class="przycisk" type="button" id="pobierz-csv">Pobierz tabelę</button>
-      <button class="przycisk przycisk-drugi" type="button" id="udostepnij-csv" hidden>Wyślij tabelę</button>
+      <button class="wz-przycisk wz-pelny przycisk" type="button" id="pobierz-csv"><span class="t">Pobierz tabelę</span></button>
+      <button class="wz-przycisk przycisk przycisk-drugi" type="button" id="udostepnij-csv" hidden><span class="t">Wyślij tabelę</span></button>
     </div>
     <p class="drugi" id="eksport-info" aria-live="polite"></p>
     <h2>Ostatnie 30 odpowiedzi</h2>
@@ -235,8 +236,8 @@
       </div>
       <p class="drugi" id="nagroda-info" aria-live="polite"></p>
       <div class="przyciski przyciski-lewo przyciski-blisko">
-        <button class="przycisk przycisk-drugi" type="button" id="wymien">Wymień na nagrodę</button>
-        <button class="przycisk przycisk-drugi" type="button" id="cofnij-wymiane" aria-label="Cofnij wymianę">Cofnij</button>
+        <button class="wz-przycisk przycisk przycisk-drugi" type="button" id="wymien"><span class="t">Wymień na nagrodę</span></button>
+        <button class="wz-przycisk przycisk przycisk-drugi" type="button" id="cofnij-wymiane" aria-label="Cofnij wymianę"><span class="t">Cofnij</span></button>
       </div>
       <h2>Bonus</h2>
       <p class="drugi">Nie liczy się do dziennego limitu sesji.</p>
@@ -244,7 +245,7 @@
         <div><label class="pole-etykieta" for="u-bonus">Punkty</label><input class="pole" id="u-bonus" type="number" min="1" max="500" inputmode="numeric"></div>
         <div><label class="pole-etykieta" for="u-bonus-opis">Za co (dziecko to zobaczy)</label><input class="pole" id="u-bonus-opis" maxlength="40" placeholder="za cały tydzień"></div>
       </div>
-      <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="dodaj-bonus">Dodaj do słoika</button></div>
+      <div class="przyciski przyciski-lewo przyciski-blisko"><button class="wz-przycisk przycisk przycisk-drugi" type="button" id="dodaj-bonus"><span class="t">Dodaj do słoika</span></button></div>
       <p class="drugi" id="bonus-info" aria-live="polite"></p>
     </form>
     <h2>Ostatnio w słoiku</h2>
@@ -257,18 +258,18 @@
       <label class="pole-etykieta" for="nowy-pin">Nowy PIN, od 4 do 8 cyfr</label>
       <div class="wiersz-pola">
         <input class="pole pole-pin" id="nowy-pin" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password">
-        <button class="przycisk przycisk-drugi" type="button" id="zmien-pin">Zmień PIN</button>
+        <button class="wz-przycisk przycisk przycisk-drugi" type="button" id="zmien-pin"><span class="t">Zmień PIN</span></button>
       </div>
       <p class="drugi" id="pin-info" aria-live="polite"></p>
     </div>
     <h2>Kolejność</h2>
-    <p class="drugi">Kafelki na starcie, zakładki tutaj i kolumny tabeli.</p>
-    <div class="przyciski przyciski-lewo przyciski-blisko"><button class="przycisk przycisk-drugi" type="button" id="przywroc-kolejnosc">Przywróć kolejność</button></div>
+    <p class="drugi">Kafelki i zakładki: przytrzymaj i przeciągnij.</p>
+    <div class="przyciski przyciski-lewo przyciski-blisko"><button class="wz-przycisk przycisk przycisk-drugi" type="button" id="przywroc-kolejnosc"><span class="t">Przywróć kolejność</span></button></div>
     <h2>Od nowa</h2>
     <p class="drugi">Kasuje odpowiedzi, słoik i ustawienia.</p>
     <div class="przyciski przyciski-lewo przyciski-blisko">
-      <button class="przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc">Wyczyść wszystko</button>
-      <button class="przycisk przycisk-drugi" type="button" id="cofnij-wyczyszczenie" aria-label="Cofnij wyczyszczenie">Cofnij</button>
+      <button class="wz-przycisk przycisk przycisk-drugi przycisk-niszczy" type="button" id="wyczysc"><span class="t">Wyczyść wszystko</span></button>
+      <button class="wz-przycisk przycisk przycisk-drugi" type="button" id="cofnij-wyczyszczenie" aria-label="Cofnij wyczyszczenie"><span class="t">Cofnij</span></button>
     </div>
     <p class="drugi" id="dane-info" aria-live="polite"></p>
   </section>
@@ -278,6 +279,7 @@
 <script src="silnik.js"></script>
 <script src="baza.js"></script>
 <script src="przestawiane.js"></script>
+<script src="jezyk.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -79,6 +79,10 @@ final class Ekran: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScrip
         web.load(URLRequest(url: URL(string: "tabliczka://app/index.html")!))
     }
 
+    // Pełny ekran (reguła Jacka z 24.10.2026): bez paska stanu, a kreska na dole przygasa, gdy nikt nie dotyka ekranu.
+    override var prefersStatusBarHidden: Bool { return true }
+    override var prefersHomeIndicatorAutoHidden: Bool { return true }
+
     // Układ jest liczony na jeden ekran bez przewijania; powiększanie palcami by go rozsadziło.
     func viewForZooming(in scrollView: UIScrollView) -> UIView? { return nil }
 

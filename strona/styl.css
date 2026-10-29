@@ -81,23 +81,21 @@ h2 { font-size: var(--t-tresc); font-weight: 600; margin: 24px 0 8px; }
 .wstep { margin: 8px 0 0; font-size: var(--t-tresc); line-height: 1.4; }
 .drugi { color: var(--drugi); font-size: var(--t-drugi); margin: 8px 0; }
 
-/* Przyciski */
+/* Przyciski: wygląd, szkło i reakcję na mysz i palec dają klocki Wzornika (jezyk.css, wz-przycisk, wz-pelny).
+ * Tu tylko wielkość i to, czego klocek nie wie o Tabliczce. Napis stoi w <span class="t">, bo tylko tam jest na środku wersalików. */
 .przyciski { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
-.przyciski-lewo { flex-direction: row; flex-wrap: wrap; }
-.przycisk {
-  min-height: 52px; padding: 12px 24px; border: 0; border-radius: 14px;
-  background: var(--przycisk); color: var(--na-przycisku); font-size: var(--t-tresc); font-weight: 600;
-}
-.przycisk-drugi { background: var(--pole); color: var(--tekst); }
-/* Cel dotyku co najmniej 48 px (reguła Jacka: 48 dp na telefonie). */
-.cichy { background: none; border: 0; color: var(--akcent); font-size: var(--t-tresc); font-weight: 400; padding: 8px; min-height: 48px; }
-/* Kasowanie: czerwony napis na szarym (rola „destructive”), nigdy niebieski przycisk główny. */
-.przycisk-niszczy { color: var(--niszczy); }
+/* Rząd osobnych pigułek: 16 px między nimi, 8 px między rzędami (rdzeń wyglądu, zasady 3 i 5). */
+.przyciski-lewo { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; }
+.przycisk { --p-wys: 52px; --p-promien: 14px; padding: 0 24px; font-size: var(--t-tresc); }
+/* Ciche przyciski w rogu (Zakończ, Pomóż mi, Wróć): szkło jak reszta, cel dotyku co najmniej 48 px. */
+.cichy { --p-wys: 48px; font-size: var(--t-tresc); }
+/* Kasowanie: czerwony napis na szarym szkle (rola „destructive”), nigdy niebieski przycisk główny. */
+.przycisk-niszczy { --p-napis: var(--niszczy); }
 .przyciski-blisko { margin-top: 12px; }
 
 /* Wróć: zawsze w lewym górnym rogu, jak „Koniec” w sesji. */
 .nawigacja { margin-bottom: 8px; }
-.wstecz { display: inline-flex; align-items: center; gap: 8px; }
+.wstecz { padding-left: 14px; }
 .ikona-wstecz { width: 11px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Przycisk, który teraz nic nie zrobi, jest przygaszony, a nie schowany: układ się nie przesuwa. */
@@ -109,17 +107,20 @@ h2 { font-size: var(--t-tresc); font-weight: 600; margin: 24px 0 8px; }
 .ekran-start { display: flex; flex-direction: column; gap: clamp(16px, 3vh, 24px); }
 .naglowek { padding-top: clamp(0px, 1.3vh, 12px); }
 .kafle { display: grid; gap: 12px; }
+/* Kafelek to duży przycisk Wzornika: biała karta ze szkłem (w ciemnym czerń z włoskiem), główny w akcencie. */
 .kafel {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left;
-  padding: clamp(12px, 2.2vh, 20px); border: 1px solid var(--obwodka); border-radius: var(--promien);
-  background: var(--karta); min-height: clamp(80px, 10vh, 88px);
-  touch-action: manipulation; user-select: none; -webkit-user-select: none;
+  --p-promien: var(--promien);
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 4px; text-align: left;
+  white-space: normal; font-weight: 400;
+  padding: clamp(12px, 2.2vh, 20px); min-height: clamp(80px, 10vh, 88px);
+  touch-action: manipulation;
 }
-.kafel-glowny { background: var(--przycisk); color: var(--na-przycisku); border-color: transparent; min-height: clamp(104px, 14vh, 132px); justify-content: flex-end; }
+.kafel:not(.wz-pelny) { --p-tlo: var(--karta); }
+.kafel-glowny { min-height: clamp(104px, 14vh, 132px); justify-content: flex-end; }
 .kafel-tytul { font-size: var(--t-tresc); font-weight: 600; }
 /* Główny kafelek wyróżnia kolor i wysokość, nie rozmiar tekstu (Apple HIG: stylem, nie rozmiarem). */
 .kafel-opis { font-size: var(--t-drugi); color: var(--drugi); }
-.kafel-glowny .kafel-opis { color: var(--na-przycisku); }
+.kafel-glowny .kafel-opis { color: inherit; }
 .pasek { display: block; width: 100%; height: 8px; border-radius: 4px; background: var(--pole); margin-top: 8px; overflow: hidden; }
 .pasek > span { display: block; height: 100%; width: 0; background: var(--dobrze); border-radius: 4px; }
 .przeciagany { opacity: .85; transform: scale(1.02); box-shadow: 0 8px 28px rgba(0, 0, 0, .18); z-index: 2; position: relative; }
@@ -197,13 +198,11 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 
 .klawiatura { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .klawiatura button {
-  min-height: clamp(50px, 7.2vh, 64px); border: 0; border-radius: 14px; background: var(--pole);
-  font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; touch-action: manipulation;
+  --p-promien: 14px; min-height: clamp(50px, 7.2vh, 64px); padding: 0;
+  font-size: 26px; font-variant-numeric: tabular-nums; touch-action: manipulation;
 }
-.klawiatura button:active { background: var(--pole-wcisniete); }
 .klawiatura .klawisz-cichy { font-size: var(--t-tresc); font-weight: 400; }
-.klawiatura .klawisz-ok { grid-column: 1 / -1; background: var(--przycisk); color: var(--na-przycisku); font-size: var(--t-tresc); }
-.klawiatura .klawisz-ok:active { filter: brightness(.92); }
+.klawiatura .klawisz-ok { grid-column: 1 / -1; font-size: var(--t-tresc); }
 .ikona-usun { display: block; width: 30px; height: 22px; margin: auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 /* Po pomyłce czynny jest tylko „Dalej”. Przygaszone klawisze są nieczynne, więc nie muszą mieć kontrastu tekstu. */
 .czeka-dalej .klawiatura button:not(.klawisz-ok) { opacity: .35; pointer-events: none; }
@@ -238,7 +237,7 @@ select.pole { appearance: none; -webkit-appearance: none; background-image: line
 .formularz > .wiersz-pola { margin-top: 16px; }
 /* Pole pod swoją etykietą stoi 8 px niżej, jak każde inne pole (w grupie ciaśniej). */
 .formularz > .pole-etykieta + .wiersz-pola { margin-top: 0; }
-/* Pierwsza rzecz w każdej zakładce rodziców stoi 16 px pod zakładkami (zasada 7: ta sama relacja, ten sam odstęp). */
+/* Pierwsza rzecz w każdej zakładce rodziców stoi 12 px pod zakładkami (zasada 7: ta sama relacja, ten sam odstęp). */
 .panel > :first-child,
 .panel > .formularz:first-child > :first-child,
 .panel .pola-dwa:first-child > :nth-child(-n+2) > .pole-etykieta:first-child { margin-top: 0; }
@@ -257,25 +256,22 @@ h1, h2 { text-wrap: balance; }
   .ekran-rodzice > :is(.nawigacja, h1, .podsumowanie, .zakladki) { grid-column: 1; }
   .ekran-rodzice > .panel { grid-column: 2; grid-row: 1 / -1; min-height: 0; overflow-y: auto; padding-right: 8px; }
   .zakladki { flex-direction: column; align-items: stretch; }
-  .zakladki button { text-align: left; }
+  .zakladki button { justify-content: flex-start; }
 }
 
-.podsumowanie { margin: 8px 0 16px; color: var(--drugi); }
+/* Podsumowanie, zakładki i panel co 12 px: na telefonie z dotykiem zakładki mają 48 px, a siatka ma się zmieścić na jednym ekranie. */
+.podsumowanie { margin: 8px 0 12px; color: var(--drugi); }
 .podsumowanie-stan { display: block; color: var(--tekst); }
 #rodzice-sesje { display: block; font-size: var(--t-drugi); }
 /* Krótkie liczby po dwie w rzędzie; etykiety mogą się zawinąć, pola i tak stoją w jednej linii. */
 .formularz-szeroki { max-width: 560px; }
 .pola-dwa, .pola-bonus { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; align-items: end; }
 .pola-bonus { grid-template-columns: 7.5rem 1fr; }
-.zakladki { display: flex; gap: 8px 6px; flex-wrap: wrap; margin-bottom: 16px; }
-.zakladki button {
-  border: 0; border-radius: 999px; padding: 8px 12px; min-height: 44px; background: var(--pole); font-size: var(--t-drugi); font-weight: 600;
-  position: relative;
-  touch-action: manipulation; user-select: none; -webkit-user-select: none;
-}
-.zakladki button[aria-selected="true"] { background: var(--tekst); color: var(--tlo); }
-/* Pigułka ma 44 px, a strefa dotyku 48 px: po 2 px w górę i w dół, w odstępie 8 px między rzędami, więc się nie nakładają. */
-.zakladki button::before { content: ""; position: absolute; inset: -2px 0; }
+/* Zakładki to osobne pigułki Wzornika; wybraną (aria-selected) klocek wypełnia pastelem z pierścieniem i pogrubia. */
+.zakladki { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.zakladki button { --p-wys: 44px; padding: 0 12px; font-size: var(--t-drugi); touch-action: manipulation; }
+/* Na ekranie dotykowym cel ma 48 px (rdzeń wyglądu, zasada 11). */
+@media (pointer: coarse) { .zakladki button { --p-wys: 48px; } }
 .siatka-ramka, .tabela-ramka { overflow-x: auto; }
 .siatka { border-collapse: separate; border-spacing: 4px; font-variant-numeric: tabular-nums; }
 .siatka th { font-size: var(--t-drugi); color: var(--drugi); font-weight: 600; padding: 0 4px; white-space: nowrap; }
@@ -312,9 +308,12 @@ h1, h2 { text-wrap: balance; }
 .historia li { margin: 4px 0; }
 
 @media (min-width: 700px) {
-  .kafle { grid-template-columns: 1fr 1fr; }
+  /* Na komputerze odstęp siatki 16 px (rdzeń wyglądu, zasada 4), na telefonie 12 px. */
+  .kafle { grid-template-columns: 1fr 1fr; gap: 16px; }
   .kafel-glowny { grid-column: 1 / -1; }
 }
+/* Wąski telefon (360 px): Zakończ i Pomóż mi mniejszym krojem, żeby pasek postępu między nimi miał miejsce. */
+@media (max-width: 379.98px) { .sesja-gora .cichy { font-size: var(--t-drugi); } }
 @media (max-height: 700px) {
   .ekran-sesja { gap: 8px; }
   .informacja { margin-top: 8px; }
